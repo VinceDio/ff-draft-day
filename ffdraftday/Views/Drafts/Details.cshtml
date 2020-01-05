@@ -1,0 +1,26 @@
+﻿@model ffdraftday.Models.Draft
+
+@{
+    ViewData["Title"] = "Draft Details";
+}
+<h3>@Model.Name</h3>
+<div class="float-right">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="p-3">Edit</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="text-danger p-3">Delete</a>
+</div>
+<div>@Model.Location</div>
+<div>@Model.StartTime.ToString("dddd, MMMM d, yyyy")</div>
+
+
+<hr />
+<h4>Teams</h4>
+@foreach(Team team in Model.Teams)
+{
+    <div class="p-3 row">
+        <div class="col-sm-3">
+            <a asp-action="Details" asp-controller="Team" asp-route-id="@team.Id">@team.Name</a>
+        </div>
+        <div class="col-sm-3">@team.Owner</div>
+    </div>
+}
+

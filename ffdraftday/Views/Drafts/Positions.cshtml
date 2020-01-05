@@ -1,0 +1,45 @@
+﻿@model List<RosterPosition>
+@{
+    ViewData["Title"] = "Positions";
+}
+<div class="mb-3">
+    <partial name="_DraftHeader" model="ViewBag.Draft" />
+    <a asp-action="Details" asp-route-id="@ViewBag.Draft.Id" class="btn btn-secondary">Back to Draft</a>
+</div>
+<h3>Positions</h3>
+<div class="row">
+    <div class="col-12 col-lg-4">
+        @{ int ctr = 0; }
+        @foreach (RosterPosition pos in Model)
+        {
+            ctr += 1;
+            <div class="row my-3">
+                <div class="col-2 small">@ctr.</div>
+                <div class="col-5">@pos.Position</div>
+                <div class="col-5">
+                    <form action="RemovePosition" method="post">
+                        <input type="hidden" name="id" value="@pos.Id" />
+                        <input type="submit" value="Remove" class="btn btn-sm btn-danger small" onclick="return confirm('Remove position from league?')">
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="col-12 col-lg-4">
+        <div>
+            <form action="AddPosition" method="post">
+                <input type="hidden" name="draftId" value="@ViewBag.Draft.Id" />
+                <div>New Position:</div>
+                <select name="position" class="form-control col-5 d-inline">
+                    @{ List<Position> positions = ViewBag.Positions; }
+                    @foreach (Position pos in positions)
+                    {
+                        <option>@pos.Code</option>
+                    }
+                </select>
+                <input type="submit" value="Add" class="btn btn-success" />
+            </form>
+        </div>
+    </div>
+</div>
+

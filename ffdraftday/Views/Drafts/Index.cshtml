@@ -1,0 +1,29 @@
+﻿@model IEnumerable<ffdraftday.Models.Draft>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h3>Drafts</h3>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">New</a>
+</p>
+<div class="row">
+    @foreach (Draft draft in Model)
+    {
+        <div class="col-sm-4">
+            <div class="card">
+                <a asp-action="Details" asp-route-id="@draft.Id">
+                    <div class="card-header">
+                        <h5 class="font-weight-bold">@draft.Name</h5>
+                    </div>
+                    <div class="card-body">
+                        <div>@draft.Location</div>
+                        <div>@draft.StartTime.ToString("dddd MMMM d, yyyy")</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    }
+</div>
