@@ -1,0 +1,41 @@
+﻿@model Team
+
+<div class="float-right">
+    <h4>@Model.Draft.Name</h4>
+</div>
+<div>
+    <span class="h3">@Model.Name</span>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="ml-3">Edit</a>
+</div>
+<div>@Model.Owner</div>
+<hr />
+<div>
+    <a asp-controller="Drafts" asp-action="Details" asp-route-id="@Model.DraftId" class="btn btn-secondary">Back to Draft</a>
+</div>
+<div class="mt-4">
+    <h4>Picks</h4>
+    @if (Model.Picks == null)
+    {
+        <div>Not loaded</div>
+    }
+    else
+    {
+        foreach (Pick pick in Model.Picks)
+        {
+            <div class="row">
+                <div class="col-3">
+                    @pick.Round.
+                </div>
+                <div class="col-3">
+                    @pick.Player.Name
+                </div>
+                <div class="col-3">
+                    @pick.Player.Position
+                </div>
+                <div class="col-3">
+                    @pick.Player.NFLTeam
+                </div>
+            </div>
+        }
+    }
+</div>

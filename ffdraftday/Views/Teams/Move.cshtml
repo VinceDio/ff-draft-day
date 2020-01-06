@@ -1,0 +1,27 @@
+﻿@model List<Team>
+
+@{
+    ViewData["Title"] = "Draft Details";
+}
+
+@{ Draft draft = ViewBag.Draft; }
+
+<h3>@draft.Name</h3>
+<a asp-action="Details" asp-controller="Drafts" asp-route-id="@draft.Id" class="btn btn-secondary">Back to Draft</a>
+<hr />
+<h4>Edit Draft Positions</h4>
+@foreach (Team team in Model.OrderBy(t => t.DraftPosition))
+{
+    <div class="row m-2 p-2 shadow col-lg-6" data-pos="@team.Id">
+        <div class="h5 col-12"><a asp-action="Details" asp-controller="Teams" asp-route-id="@team.Id">@team.Name</a></div>
+        <div class="col-12">
+            @team.Owner
+            <form asp-action="Move" method="post" class="float-right">
+                <input type="hidden" name="id" value="@team.Id" />
+                <input type="submit" name="direction" value="Move Up" class="btn btn-sm btn-secondary">
+                <input type="submit" name="direction" value="Move Down" class="btn btn-sm btn-secondary">
+            </form>
+        </div>
+    </div>
+}
+
