@@ -22,6 +22,7 @@ namespace ffdraftday.Repos
             var draft = _db.Draft.Where(d => d.Id == id)
                 .Include(d => d.RosterPositions)
                 .Include(d => d.Teams)
+                .Include(d => d.Picks)
                 .FirstOrDefault();
             return draft;
         }
@@ -85,6 +86,46 @@ namespace ffdraftday.Repos
             var draft = _db.Draft.Find(draftId);
             _db.Draft.Remove(draft);
 
+            _db.SaveChanges();
+        }
+
+        public void InitPicks(int draftId)
+        {
+            var draft = Get(draftId);
+            if (draft == null) throw new Exception("Invalid draft id");
+            //if (draft.Picks != null) throw new Exception("Picks already found for this draft.");
+            if (draft.Picks != null)
+            {
+                var picks = _db.Pick.Where(p => p.DraftId == draftId);
+                _db.Pick.RemoveRange(picks);
+                _db.SaveChanges();
+            }
+            if (draft.NumberOfTeams < 4) throw new Exception("Must have at least 4 teams");
+            if (draft.Rounds < 4) throw new Exception("Must assign at least 4 roster positions.");
+            int round = 0;
+            int overallPick = 0;
+            var teams = draft.Teams.OrderBy(t => t.DraftPosition).ToList();
+            while (round < draft.Rounds)
+            {
+                round += 1;
+                int selection = 0;
+                foreach (Team team in teams)
+                {
+                    overallPick += 1;
+                    selection += 1;
+                    var pick = new Pick
+                    {
+                        DraftId = draftId,
+                        TeamId = team.Id,
+                        Round = round,
+                        Selection = selection,
+                        OverallPick = overallPick
+                    };
+                    _db.Pick.Add(pick);
+                }
+                //reverse order to snake
+                teams.Reverse();
+            }
             _db.SaveChanges();
         }
     }

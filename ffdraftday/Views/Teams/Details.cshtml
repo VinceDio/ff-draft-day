@@ -20,20 +20,20 @@
     }
     else
     {
-        foreach (Pick pick in Model.Picks)
+        foreach (Pick pick in Model.Picks.OrderBy(p => p.OverallPick))
         {
             <div class="row">
                 <div class="col-3">
-                    @pick.Round.
+                    @($"{pick.Round}.{pick.Selection} ({pick.OverallPick})")
                 </div>
                 <div class="col-3">
-                    @pick.Player.Name
+                    @pick.Player?.Name
                 </div>
                 <div class="col-3">
-                    @pick.Player.Position
+                    @pick.Player?.Position
                 </div>
                 <div class="col-3">
-                    @pick.Player.NFLTeam
+                    @pick.Player?.NFLTeam
                 </div>
             </div>
         }

@@ -1,0 +1,19 @@
+﻿@model Draft
+
+<partial name="_DraftHeader" model="Model" />
+
+<div asp-validation-summary="All" class="text-danger">
+
+</div>
+
+<h4>Initialize Picks</h4>
+
+<p class="text-danger h5">
+    You are about to initialize the picks for this draft. This will clear any previous selections. Are you sure you want to continue?
+</p>
+
+<form asp-action="InitPicksPost" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <input type="submit" value="Initialize" class="btn btn-danger" />
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+</form>

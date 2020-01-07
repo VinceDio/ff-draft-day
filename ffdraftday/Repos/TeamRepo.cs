@@ -19,6 +19,7 @@ namespace ffdraftday.Repos
         {
             var team = _db.Team
                 .Include(t => t.Draft)
+                .Include(t => t.Picks)
                 .Where(t => t.Id == id)
                 .FirstOrDefault();
             return team;

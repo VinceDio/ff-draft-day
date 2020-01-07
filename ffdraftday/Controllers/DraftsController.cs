@@ -174,5 +174,27 @@ namespace ffdraftday.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Positions", new { draftId = pos.DraftId });
         }
+
+        public IActionResult InitPicks(int id)
+        {
+            var draft = _repo.drafts.Get(id);
+            return View(draft);
+        }
+
+        [HttpPost("InitPicks")]
+        public IActionResult InitPicksPost(int id)
+        {
+            try
+            {
+                _repo.drafts.InitPicks(id);
+                return RedirectToAction("Details", new { id });
+            }
+            catch (Exception ex)
+            {
+                var draft = _repo.drafts.Get(id);
+                ModelState.AddModelError("", "Could not initialize picks. " + ex.Message);
+                return View("InitPicks", draft);
+            }
+        }
     }
 }

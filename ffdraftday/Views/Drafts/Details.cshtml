@@ -27,4 +27,11 @@
     </div>
 }
 
+<div>
+    @if (Model.Teams != null && Model.RosterPositions != null)
+    {
+        <a asp-action="InitPicks" asp-route-id="@Model.Id" class="btn btn-primary">Initialize Picks</a>
+    }
+</div>
+
 
