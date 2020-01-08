@@ -1,20 +1,62 @@
-﻿@model Team
+﻿@model ffdraftday.ViewModels.TeamViewModel
 
+@{ var team = Model.Team; }
 <div class="float-right">
-    <h4>@Model.Draft.Name</h4>
+    <h4>@team.Draft.Name</h4>
 </div>
 <div>
-    <span class="h3">@Model.Name</span>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="ml-3">Edit</a>
+    <span class="h3">@team.Name</span>
+    <a asp-action="Edit" asp-route-id="@team.Id" class="ml-3">Edit</a>
 </div>
-<div>@Model.Owner</div>
+<div>@team.Owner</div>
 <hr />
 <div>
-    <a asp-controller="Drafts" asp-action="Details" asp-route-id="@Model.DraftId" class="btn btn-secondary">Back to Draft</a>
+    <a asp-controller="Drafts" asp-action="Details" asp-route-id="@team.DraftId" class="btn btn-outline-primary">Back to Draft</a>
 </div>
+
+<div class="mt-4">
+    <h4>Trades</h4>
+    @foreach(Trade trade in Model.Trades)
+    {
+        <div class="shadow my-2 p-2">
+            <div class="row">
+                <div class="col-6">
+                    <div class="font-weight-bold">@trade.Team1.Name</div>
+                    @foreach (TradeItem item in trade.Items.Where(i => i.TeamId == trade.Team1.Id))
+                    {
+                        @if (item.IsPlayer)
+                        {
+                            <div>@($"{item.Player.Name} ({item.Round})")</div>
+                        }
+                        else
+                        {
+                            <div>Pick @item.Round.@item.Selection</div>
+                        }
+                    }
+                </div>
+                <div class="col-6">
+                    <div class="font-weight-bold">@trade.Team2.Name</div>
+                    @foreach (TradeItem item in trade.Items.Where(i => i.TeamId == trade.Team2.Id))
+                    {
+                        @if (item.IsPlayer)
+                        {
+                            <div>@($"{item.Player.Name} ({item.Round})")</div>
+                        }
+                        else
+                        {
+                            <div>Pick @item.Round.@item.Selection</div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
 <div class="mt-4">
     <h4>Picks</h4>
-    @if (Model.Picks == null)
+    @if (!Model.Picks.Any())
     {
         <div>Not loaded</div>
     }

@@ -18,5 +18,8 @@ namespace ffdraftday.Models
 
         public virtual List<Pick> Picks { get; set; }
         public virtual Draft Draft { get; set; }
+        public List<TradeItem> TradeItems { get; set; }
+        public List<Trade> Trades1 { get; set; }
+        public List<Trade> Trades2 { get; set; }
     }
 }

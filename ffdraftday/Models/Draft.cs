@@ -24,5 +24,6 @@ namespace ffdraftday.Models
         public virtual List<Team> Teams { get; set; }
         public virtual List<Pick> Picks { get; set; }
         public virtual List<RosterPosition> RosterPositions { get; set; }
+        public List<Trade> Trades { get; set; }
     }
 }

@@ -17,5 +17,6 @@ namespace ffdraftday.Models
 
         public virtual List<Pick> Picks { get; set; }
         public virtual PlayerRank PlayerRank { get; set; }
+        public List<TradeItem> TradeItems { get; set; }
     }
 }

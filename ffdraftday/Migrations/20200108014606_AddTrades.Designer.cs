@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ffdraftday.Models;
 
 namespace ffdraftday.Migrations
 {
     [DbContext(typeof(ffdraftdayContext))]
-    partial class ffdraftdayContextModelSnapshot : ModelSnapshot
+    [Migration("20200108014606_AddTrades")]
+    partial class AddTrades
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

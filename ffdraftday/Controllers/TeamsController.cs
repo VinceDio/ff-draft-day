@@ -21,9 +21,9 @@ namespace ffdraftday.Controllers
         public IActionResult Details(int id)
         {
             if (id == 0) return NotFound();
-            var team = _repo.teams.Get(id);
-            if (team == null) return NotFound();
-            return View(team);
+            var vm = _repo.teams.GetViewModel(id);
+            if (vm == null) return NotFound();
+            return View(vm);
         }
 
         public IActionResult Edit(int id)

@@ -19,6 +19,8 @@ namespace ffdraftday.Models
         public DbSet<Player> Player { get; set; }
         public DbSet<PlayerRank> PlayerRank { get; set; }
         public DbSet<Pick> Pick { get; set; }
+        public DbSet<Trade> Trade { get; set; }
+        public DbSet<TradeItem> TradeItem { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -28,6 +30,14 @@ namespace ffdraftday.Models
             builder.Entity<Pick>().HasOne<Draft>(p => p.Draft).WithMany(d => d.Picks).HasForeignKey(p => p.DraftId).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Pick>().HasOne<Team>(p => p.Team).WithMany(t => t.Picks).HasForeignKey(p => p.TeamId).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Pick>().HasOne<Player>(p => p.Player).WithMany(pl => pl.Picks).HasForeignKey(p => p.PlayerId).OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<TradeItem>().HasOne<Trade>(a => a.Trade).WithMany(b => b.Items).HasForeignKey(a => a.TradeId).OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<TradeItem>().HasOne<Player>(a => a.Player).WithMany(b => b.TradeItems).HasForeignKey(a => a.PlayerId).OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<TradeItem>().HasOne<Team>(a => a.Team).WithMany(b => b.TradeItems).HasForeignKey(a => a.TeamId).OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Trade>().HasOne<Draft>(a => a.Draft).WithMany(b => b.Trades).HasForeignKey(a => a.DraftId).OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Trade>().HasOne<Team>(a => a.Team1).WithMany(b => b.Trades1).HasForeignKey(a => a.Team1Id).OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Trade>().HasOne<Team>(a => a.Team2).WithMany(b => b.Trades2).HasForeignKey(a => a.Team2Id).OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<PlayerRank>().HasOne<Player>(r => r.Player).WithOne(p => p.PlayerRank).OnDelete(DeleteBehavior.Restrict);
 

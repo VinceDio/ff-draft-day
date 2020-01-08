@@ -61,3 +61,33 @@ h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5 {
 .shadow {
     box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
 }
+
+.btn-primary {
+    background-color: #9d1522;
+    border-color: #9d1522;
+}
+.btn-primary:hover {
+    background-color: #af1f2f;
+    border-color: #9d1522;
+}
+
+.btn-outline-primary {
+    color: #9d1522;
+    background-color: white;
+    border-color: #9d1522;
+}
+
+.btn-outline-primary:hover {
+    background-color: #9d1522;
+    border-color: #9d1522;
+}
+
+.btn-success {
+    background-color: #317030;
+    border-color: #37703f;
+}
+.btn-success:hover {
+    background-color: #67a36f;
+    border-color: #37703f;
+}
+

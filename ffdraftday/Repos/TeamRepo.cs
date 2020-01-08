@@ -19,7 +19,6 @@ namespace ffdraftday.Repos
         {
             var team = _db.Team
                 .Include(t => t.Draft)
-                .Include(t => t.Picks)
                 .Where(t => t.Id == id)
                 .FirstOrDefault();
             return team;
@@ -70,6 +69,21 @@ namespace ffdraftday.Repos
                 _db.Update(team);   
             }
             _db.SaveChanges();
+        }
+
+        public ViewModels.TeamViewModel GetViewModel(int id)
+        {
+            var vm = new ViewModels.TeamViewModel();
+            vm.Team = Get(id);
+            if (vm.Team == null) return null;
+            vm.Picks = _db.Pick.Where(p => p.TeamId == id).OrderBy(p => p.Round).ThenBy(p => p.Selection).ToList();
+            vm.Trades = _db.Trade
+                .Include(t => t.Items).ThenInclude(i => i.Player)
+                .Include(t => t.Team1)
+                .Include(t => t.Team2)
+                .Where(t => t.DraftId == vm.Team.DraftId && (t.Team1Id == id || t.Team2.Id == id))
+                .ToList();
+            return vm;
         }
     }
 }
