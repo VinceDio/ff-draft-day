@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ffdraftday.Models;
 
 namespace ffdraftday.Migrations
 {
     [DbContext(typeof(ffdraftdayContext))]
-    partial class ffdraftdayContextModelSnapshot : ModelSnapshot
+    [Migration("20200109025901_AddReadyToDraft")]
+    partial class AddReadyToDraft
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,29 +47,6 @@ namespace ffdraftday.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Draft");
-                });
-
-            modelBuilder.Entity("ffdraftday.Models.Keeper", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Note");
-
-                    b.Property<int?>("PlayerId");
-
-                    b.Property<int>("Round");
-
-                    b.Property<int>("TeamId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlayerId");
-
-                    b.HasIndex("TeamId");
-
-                    b.ToTable("Keeper");
                 });
 
             modelBuilder.Entity("ffdraftday.Models.Pick", b =>
@@ -238,19 +217,6 @@ namespace ffdraftday.Migrations
                     b.HasIndex("TradeId");
 
                     b.ToTable("TradeItem");
-                });
-
-            modelBuilder.Entity("ffdraftday.Models.Keeper", b =>
-                {
-                    b.HasOne("ffdraftday.Models.Player", "Player")
-                        .WithMany("Keepers")
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("ffdraftday.Models.Team", "Team")
-                        .WithMany("Keepers")
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ffdraftday.Models.Pick", b =>

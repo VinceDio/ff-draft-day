@@ -20,6 +20,7 @@ namespace ffdraftday.Models
         public int ClockSeconds { get; set; }
         [Required]
         public DateTime StartTime { get; set; }
+        public bool ReadyToDraft { get; set; }
 
         public virtual List<Team> Teams { get; set; }
         public virtual List<Pick> Picks { get; set; }

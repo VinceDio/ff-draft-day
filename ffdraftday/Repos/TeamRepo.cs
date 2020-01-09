@@ -83,7 +83,25 @@ namespace ffdraftday.Repos
                 .Include(t => t.Team2)
                 .Where(t => t.DraftId == vm.Team.DraftId && (t.Team1Id == id || t.Team2.Id == id))
                 .ToList();
+            vm.Trades = SwapTradeTeams(id, vm.Trades);
             return vm;
+        }
+
+        private List<Trade> SwapTradeTeams(int teamId, List<Trade> trades)
+        {
+            //ensure that team being returned is always in the first position (team 1) of the trade for visual consistency
+            foreach (Trade trade in trades)
+            {
+                if (trade.Team2Id == teamId)
+                {
+                    var holdTeam = trade.Team1;
+                    trade.Team1Id = trade.Team2Id;
+                    trade.Team1 = trade.Team2;
+                    trade.Team2Id = holdTeam.Id;
+                    trade.Team2 = holdTeam;
+                }
+            }
+            return trades;
         }
     }
 }

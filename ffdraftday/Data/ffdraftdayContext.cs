@@ -21,6 +21,7 @@ namespace ffdraftday.Models
         public DbSet<Pick> Pick { get; set; }
         public DbSet<Trade> Trade { get; set; }
         public DbSet<TradeItem> TradeItem { get; set; }
+        public DbSet<Keeper> Keeper { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -38,6 +39,9 @@ namespace ffdraftday.Models
             builder.Entity<Trade>().HasOne<Draft>(a => a.Draft).WithMany(b => b.Trades).HasForeignKey(a => a.DraftId).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Trade>().HasOne<Team>(a => a.Team1).WithMany(b => b.Trades1).HasForeignKey(a => a.Team1Id).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Trade>().HasOne<Team>(a => a.Team2).WithMany(b => b.Trades2).HasForeignKey(a => a.Team2Id).OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Keeper>().HasOne<Player>(a => a.Player).WithMany(b => b.Keepers).HasForeignKey(a => a.PlayerId).OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Keeper>().HasOne<Team>(a => a.Team).WithMany(b => b.Keepers).HasForeignKey(a => a.TeamId).OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<PlayerRank>().HasOne<Player>(r => r.Player).WithOne(p => p.PlayerRank).OnDelete(DeleteBehavior.Restrict);
 

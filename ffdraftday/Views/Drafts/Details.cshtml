@@ -3,29 +3,41 @@
 @{
     ViewData["Title"] = "Draft Details";
 }
-<h3>@Model.Name</h3>
-<div class="float-right">
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="p-3">Edit</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="text-danger p-3">Delete</a>
+<div>
+    <h3>@Model.Name</h3>
+    <div class="float-right">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="p-3">Edit</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="text-danger p-3">Delete</a>
+    </div>
+    <div>@Model.Location</div>
+    <div class="mb-2">@Model.StartTime.ToString("dddd, MMMM d, yyyy")</div>
+    @if (Model.ReadyToDraft)
+    {
+        <div class="text-success">Ready to Draft</div>
+    }
+    else
+    {
+        <div class="text-danger">Needs Initialized</div>
+    }
 </div>
-<div>@Model.Location</div>
-<div>@Model.StartTime.ToString("dddd, MMMM d, yyyy")</div>
-
-
 <hr />
 <div>
     <span class="h4 mr-3">Teams</span>
     <a asp-action="Move" asp-controller="Teams" asp-route-draftId="@Model.Id">Edit Draft Positions</a>
 </div>
-@foreach(Team team in Model.Teams.OrderBy(t => t.DraftPosition))
-{
-    <div class="row m-2 p-2 shadow col-lg-6" data-pos="@team.Id">
-        <div class="h5 col-12"><a asp-action="Details" asp-controller="Teams" asp-route-id="@team.Id">@team.Name</a></div>
-        <div class="col-12">
-            @team.Owner
+<div class="col-lg-6">
+    @foreach (Team team in Model.Teams.OrderBy(t => t.DraftPosition))
+    {
+        <div class="row my-2 p-2 shadow" data-pos="@team.Id">
+            <a asp-action="Details" asp-controller="Teams" asp-route-id="@team.Id" class="w-100">
+                <div class="h5 col-12">@team.Name</div>
+                <div class="col-12">
+                    @team.Owner
+                </div>
+            </a>
         </div>
-    </div>
-}
+    }
+</div>
 
 <div class="mt-4">
     @if (Model.Teams != null && Model.RosterPositions != null)

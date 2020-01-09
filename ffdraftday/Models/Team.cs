@@ -21,5 +21,6 @@ namespace ffdraftday.Models
         public List<TradeItem> TradeItems { get; set; }
         public List<Trade> Trades1 { get; set; }
         public List<Trade> Trades2 { get; set; }
+        public List<Keeper> Keepers { get; set; }
     }
 }

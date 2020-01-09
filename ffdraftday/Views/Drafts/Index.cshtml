@@ -13,7 +13,7 @@
     @foreach (Draft draft in Model)
     {
         <div class="col-sm-4">
-            <div class="card">
+            <div class="card shadow">
                 <a asp-action="Details" asp-route-id="@draft.Id">
                     <div class="card-header">
                         <h5 class="font-weight-bold">@draft.Name</h5>
@@ -21,6 +21,16 @@
                     <div class="card-body">
                         <div>@draft.Location</div>
                         <div>@draft.StartTime.ToString("dddd MMMM d, yyyy")</div>
+                    </div>
+                    <div class="card-footer">
+                        @if (draft.ReadyToDraft)
+                        {
+                            <div class="text-success">Ready to Draft</div>
+                        }
+                        else
+                        {
+                            <div class="text-danger">Needs Initialized</div>
+                        }
                     </div>
                 </a>
             </div>

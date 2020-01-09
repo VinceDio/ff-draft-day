@@ -91,20 +91,75 @@ namespace ffdraftday.Repos
 
         public void InitPicks(int draftId)
         {
-            var draft = Get(draftId);
+            var draft = _db.Draft.Find(draftId);
             if (draft == null) throw new Exception("Invalid draft id");
+            draft.ReadyToDraft = false;
+            _db.Update(draft);
+            _db.SaveChanges();
             //if (draft.Picks != null) throw new Exception("Picks already found for this draft.");
-            if (draft.Picks != null)
+            var existingPicks = _db.Pick.Where(p => p.DraftId == draftId);
+            if (existingPicks != null)
             {
-                var picks = _db.Pick.Where(p => p.DraftId == draftId);
-                _db.Pick.RemoveRange(picks);
+                _db.Pick.RemoveRange(existingPicks);
                 _db.SaveChanges();
             }
             if (draft.NumberOfTeams < 4) throw new Exception("Must have at least 4 teams");
             if (draft.Rounds < 4) throw new Exception("Must assign at least 4 roster positions.");
+            var picks = LoadPicks(draft);
+            try
+            {
+                picks = MoveTradedPicks(picks, draft);
+                _db.Pick.AddRange(picks);
+                draft.ReadyToDraft = true;
+                _db.Update(draft);
+                _db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                _db.Pick.AddRange(picks);
+                _db.SaveChanges();
+                throw ex;
+            }
+        }
+
+        private List<Pick> MoveTradedPicks(List<Pick> picks, Draft draft)
+        {
+            var trades = _db.Trade.Where(t => t.DraftId == draft.Id)
+                .Include(t => t.Team1)
+                .Include(t => t.Team2)
+                .Include(t => t.Items);
+            foreach(Trade trade in trades)
+            {
+                foreach(TradeItem item in trade.Items.Where(i => !i.IsPlayer))
+                {
+                    var fromTeam = (item.TeamId == trade.Team1.Id ? trade.Team2 : trade.Team1);
+                    var pick = picks.Where(p => p.Round == item.Round && p.Selection == item.Selection && p.TeamId == fromTeam.Id).FirstOrDefault();
+                    if (pick == null) throw new Exception($"Could not move traded pick: {item.Round}.{item.Selection} from {fromTeam.Name}");
+                    pick.TeamId = item.TeamId;
+                    pick.Note = "From " + fromTeam.Name;
+                }
+            }
+            var invalidTeams = picks.GroupBy(p => p.TeamId).Where(g => g.Count() != draft.Rounds).Select(g => g.Key).ToList();
+            if (invalidTeams.Any())
+            {
+                string invalidTeamNames = "";
+                foreach(int id in invalidTeams)
+                {
+                    var teamName = _db.Team.Find(id).Name;
+                    if (invalidTeamNames != "") invalidTeamNames += ", ";
+                    invalidTeamNames += teamName;
+                }
+                throw new Exception("One or more teams does not have correct number of picks due to unbalanced trade: " + invalidTeamNames);
+            }
+            return picks;
+        }
+
+        private List<Pick> LoadPicks(Draft draft)
+        {
+            var picks = new List<Pick>();
             int round = 0;
             int overallPick = 0;
-            var teams = draft.Teams.OrderBy(t => t.DraftPosition).ToList();
+            var teams = _db.Team.Where(t => t.DraftId == draft.Id).OrderBy(t => t.DraftPosition).ToList();
             while (round < draft.Rounds)
             {
                 round += 1;
@@ -115,18 +170,18 @@ namespace ffdraftday.Repos
                     selection += 1;
                     var pick = new Pick
                     {
-                        DraftId = draftId,
+                        DraftId = draft.Id,
                         TeamId = team.Id,
                         Round = round,
                         Selection = selection,
                         OverallPick = overallPick
                     };
-                    _db.Pick.Add(pick);
+                    picks.Add(pick);
                 }
                 //reverse order to snake
                 teams.Reverse();
             }
-            _db.SaveChanges();
+            return picks;
         }
     }
 }
