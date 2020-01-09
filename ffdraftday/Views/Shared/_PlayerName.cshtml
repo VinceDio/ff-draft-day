@@ -1,0 +1,8 @@
+﻿@model Player
+
+@{ var player = Model; }
+<span>
+    <span>@player.Name</span>
+    <span class="pos-pill pos-@player.Position">@player.Position</span>
+    <span class="team-badge">@player.NFLTeam</span>
+</span>

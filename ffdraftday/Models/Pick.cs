@@ -20,6 +20,7 @@ namespace ffdraftday.Models
         public int OverallPick { get; set; }
         public int TeamId { get; set; }
         public int? PlayerId { get; set; }
+        public bool IsKeeper { get; set; }
         public string Note { get; set; }
         public bool AutoPick { get; set; }
         public DateTime TimeStamp { get; set; }

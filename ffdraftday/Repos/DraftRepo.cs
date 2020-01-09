@@ -109,6 +109,7 @@ namespace ffdraftday.Repos
             try
             {
                 picks = MoveTradedPicks(picks, draft);
+                picks = LoadKeepers(picks, draft);
                 _db.Pick.AddRange(picks);
                 draft.ReadyToDraft = true;
                 _db.Update(draft);
@@ -120,38 +121,6 @@ namespace ffdraftday.Repos
                 _db.SaveChanges();
                 throw ex;
             }
-        }
-
-        private List<Pick> MoveTradedPicks(List<Pick> picks, Draft draft)
-        {
-            var trades = _db.Trade.Where(t => t.DraftId == draft.Id)
-                .Include(t => t.Team1)
-                .Include(t => t.Team2)
-                .Include(t => t.Items);
-            foreach(Trade trade in trades)
-            {
-                foreach(TradeItem item in trade.Items.Where(i => !i.IsPlayer))
-                {
-                    var fromTeam = (item.TeamId == trade.Team1.Id ? trade.Team2 : trade.Team1);
-                    var pick = picks.Where(p => p.Round == item.Round && p.Selection == item.Selection && p.TeamId == fromTeam.Id).FirstOrDefault();
-                    if (pick == null) throw new Exception($"Could not move traded pick: {item.Round}.{item.Selection} from {fromTeam.Name}");
-                    pick.TeamId = item.TeamId;
-                    pick.Note = "From " + fromTeam.Name;
-                }
-            }
-            var invalidTeams = picks.GroupBy(p => p.TeamId).Where(g => g.Count() != draft.Rounds).Select(g => g.Key).ToList();
-            if (invalidTeams.Any())
-            {
-                string invalidTeamNames = "";
-                foreach(int id in invalidTeams)
-                {
-                    var teamName = _db.Team.Find(id).Name;
-                    if (invalidTeamNames != "") invalidTeamNames += ", ";
-                    invalidTeamNames += teamName;
-                }
-                throw new Exception("One or more teams does not have correct number of picks due to unbalanced trade: " + invalidTeamNames);
-            }
-            return picks;
         }
 
         private List<Pick> LoadPicks(Draft draft)
@@ -180,6 +149,56 @@ namespace ffdraftday.Repos
                 }
                 //reverse order to snake
                 teams.Reverse();
+            }
+            return picks;
+        }
+
+        private List<Pick> MoveTradedPicks(List<Pick> picks, Draft draft)
+        {
+            var trades = _db.Trade.Where(t => t.DraftId == draft.Id)
+                .Include(t => t.Team1)
+                .Include(t => t.Team2)
+                .Include(t => t.Items);
+            foreach (Trade trade in trades)
+            {
+                foreach (TradeItem item in trade.Items.Where(i => !i.IsPlayer))
+                {
+                    var fromTeam = (item.TeamId == trade.Team1.Id ? trade.Team2 : trade.Team1);
+                    var pick = picks.Where(p => p.Round == item.Round && p.Selection == item.Selection && p.TeamId == fromTeam.Id).FirstOrDefault();
+                    if (pick == null) throw new Exception($"Could not move traded pick: {item.Round}.{item.Selection} from {fromTeam.Name}");
+                    pick.TeamId = item.TeamId;
+                    pick.Note = "From " + fromTeam.Name;
+                }
+            }
+            var invalidTeams = picks.GroupBy(p => p.TeamId).Where(g => g.Count() != draft.Rounds).Select(g => g.Key).ToList();
+            if (invalidTeams.Any())
+            {
+                string invalidTeamNames = "";
+                foreach (int id in invalidTeams)
+                {
+                    var teamName = _db.Team.Find(id).Name;
+                    if (invalidTeamNames != "") invalidTeamNames += ", ";
+                    invalidTeamNames += teamName;
+                }
+                throw new Exception("One or more teams does not have correct number of picks due to unbalanced trade: " + invalidTeamNames);
+            }
+            return picks;
+        }
+
+        private List<Pick> LoadKeepers(List<Pick> picks, Draft draft)
+        {
+            var teams = _db.Team.Where(t => t.DraftId == draft.Id).Include(t => t.Keepers);
+            foreach(Team team in teams)
+            {
+                foreach(Keeper keeper in team.Keepers.OrderBy(k => k.Round))
+                {
+                    //find last pick that is available to use for keeper that is within the same round or earlier 
+                    //(if none available in keeper round, will use first available higher round)
+                    var pick = picks.Where(p => p.TeamId == team.Id && p.Round <= keeper.Round && p.PlayerId == null).OrderBy(p => p.OverallPick).LastOrDefault();
+                    if (pick == null) throw new Exception($"Could not load keeper: {team.Name} Round {keeper.Round}");
+                    pick.PlayerId = keeper.PlayerId;
+                    pick.IsKeeper = true;
+                }
             }
             return picks;
         }

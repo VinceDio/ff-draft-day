@@ -11,6 +11,6 @@ namespace ffdraftday.ViewModels
         public Team Team;
         public List<Pick> Picks;
         public List<Trade> Trades;
-        //list of keepers
+        public List<Keeper> Keepers;
     }
 }

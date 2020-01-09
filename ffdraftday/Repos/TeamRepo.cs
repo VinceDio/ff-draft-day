@@ -84,6 +84,7 @@ namespace ffdraftday.Repos
                 .Where(t => t.DraftId == vm.Team.DraftId && (t.Team1Id == id || t.Team2.Id == id))
                 .ToList();
             vm.Trades = SwapTradeTeams(id, vm.Trades);
+            vm.Keepers = _db.Keeper.Include(k => k.Player).Where(k => k.TeamId == id).OrderBy(k => k.Round).ToList();
             return vm;
         }
 
