@@ -18,6 +18,11 @@ namespace ffdraftday.Repos
             _db = db;
         }
 
+        public Player Get(int id)
+        {
+            return _db.Player.Find(id);
+        }
+
         public List<PlayerRank> Search(string text)
         {
             if (text == null) return new List<PlayerRank>();
@@ -40,6 +45,13 @@ namespace ffdraftday.Repos
                 }
             }
             return ranks.OrderBy(p => p.Rank).ToList();
+        }
+
+        public List<Select2Object> PlayerSelectList(string text)
+        {
+            var players = Search(text);
+            List<Select2Object> list = players.Select(p => new Select2Object(p.PlayerId, p.Player.Name)).ToList();
+            return list;
         }
 
         public List<Position> PositionList()

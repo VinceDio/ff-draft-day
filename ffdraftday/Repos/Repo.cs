@@ -13,12 +13,14 @@ namespace ffdraftday.Repos
         public DraftRepo drafts;
         public TeamRepo teams;
         public PlayerRepo players;
+        public KeeperRepo keepers;
         public Repo(ffdraftdayContext db)
         {
             _db = db;
             drafts = new DraftRepo(_db);
             teams = new TeamRepo(_db);
             players = new PlayerRepo(_db);
+            keepers = new KeeperRepo(_db);
         }
 
 

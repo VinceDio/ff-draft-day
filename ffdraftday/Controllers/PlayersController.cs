@@ -149,6 +149,13 @@ namespace ffdraftday.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<JsonResult> PlayerList(string searchText)
+        {
+            var players = _repo.players.PlayerSelectList(searchText);
+            return Json(players);
+        }
+
         private bool PlayerExists(int id)
         {
             return _context.Player.Any(e => e.Id == id);
