@@ -6,22 +6,27 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ffdraftday.Models;
+using ffdraftday.Repos;
 
 namespace ffdraftday.Controllers
 {
     public class PlayersController : Controller
     {
         private readonly ffdraftdayContext _context;
+        private Repo _repo;
 
-        public PlayersController(ffdraftdayContext context)
+        public PlayersController(ffdraftdayContext context, Repo repo)
         {
             _context = context;
+            _repo = repo;
         }
 
         // GET: Players
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchText)
         {
-            return View(await _context.Player.ToListAsync());
+            var players = _repo.players.Search(searchText);
+            ViewBag.SearchText = searchText;
+            return View(players);
         }
 
         // GET: Players/Details/5

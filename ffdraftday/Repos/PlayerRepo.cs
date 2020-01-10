@@ -1,4 +1,5 @@
 ﻿using ffdraftday.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,30 @@ namespace ffdraftday.Repos
         {
             LoadPositions();
             _db = db;
+        }
+
+        public List<PlayerRank> Search(string text)
+        {
+            if (text == null) return new List<PlayerRank>();
+            if (text.Length < 2) return new List<PlayerRank>();
+            text =  text.ToLower();
+            var ranks = _db.PlayerRank.Include(p => p.Player)
+                .Where(p => p.Year == DateTime.Today.Year && p.Player.Name.ToLower().Contains(text)).ToList();
+            //add in non ranked players
+            var players = _db.Player.Where(p => p.Name.ToLower().Contains(text));
+            foreach (Player player in players)
+            {
+                if (!ranks.Any(r => r.PlayerId == player.Id))
+                {
+                    var rank = new PlayerRank
+                    {
+                        PlayerId = player.Id,
+                        Player = player
+                    };
+                    ranks.Add(rank);
+                }
+            }
+            return ranks.OrderBy(p => p.Rank).ToList();
         }
 
         public List<Position> PositionList()

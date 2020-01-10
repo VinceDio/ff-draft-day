@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ffdraftday.Models.Player>
+﻿@model List<PlayerRank>
 
 @{
     ViewData["Title"] = "Index";
@@ -6,42 +6,24 @@
 
 <h2>Players</h2>
 
-<p>
-    <a asp-action="Create">Add New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NFLTeam)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Position)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NFLTeam)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Position)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<form asp-action="Index" method="get">
+    <input name="searchText" value="@ViewBag.SearchText" type="text" class="form-control" />
+    <div class="mt-2">
+        <input type="submit" value="Search" class="btn btn-primary" />
+        <a asp-action="Create" class="btn btn-success">Add New</a>
+    </div>
+</form>
+
+<div>
+    @foreach (PlayerRank pr in Model)
+    {
+        <div class="shadow my-2 p-2">
+            <a asp-action="Edit" asp-route-id="@pr.PlayerId">
+                <div class="w-100">
+                    @(pr.Rank.ToString() + ".")
+                    <partial name="_PlayerName" model="@pr.Player" />
+                </div>
+            </a>
+        </div>
+    }
+</div>
