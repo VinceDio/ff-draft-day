@@ -27,7 +27,8 @@ namespace ffdraftday.Repos
 
         internal void Save(Keeper keeper)
         {
-            _db.Update(keeper);
+            if (keeper.Id == 0) _db.Keeper.Add(keeper);
+            else _db.Update(keeper);
             _db.SaveChanges();
         }
     }

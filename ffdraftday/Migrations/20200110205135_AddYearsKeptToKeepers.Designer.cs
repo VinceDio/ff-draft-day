@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ffdraftday.Models;
 
 namespace ffdraftday.Migrations
 {
     [DbContext(typeof(ffdraftdayContext))]
-    partial class ffdraftdayContextModelSnapshot : ModelSnapshot
+    [Migration("20200110205135_AddYearsKeptToKeepers")]
+    partial class AddYearsKeptToKeepers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,7 +63,7 @@ namespace ffdraftday.Migrations
 
                     b.Property<int>("TeamId");
 
-                    b.Property<int>("YearsRemaining");
+                    b.Property<int>("YearsKept");
 
                     b.HasKey("Id");
 

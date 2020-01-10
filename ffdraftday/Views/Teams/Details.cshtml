@@ -15,7 +15,10 @@
 </div>
 
 <div class="mt-4">
-    <h4>Trades</h4>
+    <div>
+        <span class="h4">Trades</span>
+        <a asp-action="Create" asp-controller="Trades" asp-route-teamId="@team.Id" class="btn btn-sm btn-success ml-2">Add</a>
+    </div>
     <div class="col-lg-7">
         @if (!Model.Keepers.Any())
         {
@@ -31,13 +34,13 @@
                         @foreach (TradeItem item in trade.Items.Where(i => i.TeamId == trade.Team1.Id))
                         {
                             @if (item.IsPlayer)
-                        {
+                            {
                                 <div>@($"{item.Player.Name} ({item.Round})")</div>
-                        }
-                        else
-                        {
+                            }
+                            else
+                            {
                                 <div>Pick @item.Round.@item.Selection</div>
-                        }
+                            }
                         }
                     </div>
                     <div class="col-6">
@@ -46,13 +49,13 @@
                         {
                             <div>
                                 @if (item.IsPlayer)
-                        {
+                                {
                                     <partial name="_PlayerName" model="@item.Player" />
-                        }
-                        else
-                        {
+                                }
+                                else
+                                {
                                     <span>Pick @item.Round.@item.Selection</span>
-                        }
+                                }
                             </div>
                         }
                     </div>
@@ -64,7 +67,10 @@
 </div>
 
 <div class="mt-4">
-    <h4>Keepers</h4>
+    <div>
+        <span class="h4">Keepers</span>
+        <a asp-action="Create" asp-controller="Keepers" asp-route-teamId="@team.Id" class="btn btn-sm btn-success ml-2">Add</a>
+    </div>
     <div class="col-lg-7">
         @if (!Model.Keepers.Any())
         {
@@ -75,14 +81,15 @@
             foreach (Keeper keeper in Model.Keepers)
             {
                 <div class="row my-2 shadow p-2">
-                    <div class="col">
-                        <span>(@keeper.Round)</span>
-                        <partial name="_PlayerName" model="@keeper.Player" />
-                        <span class="font-italic">
-                            @keeper.Note
-                        </span>
-                    </div>
-                    <a asp-action="Edit" asp-controller="Keepers" asp-route-id="@keeper.Id" class="btn btn-sm btn-secondary float-right">Edit</a>
+                    <a asp-action="Edit" asp-controller="Keepers" asp-route-id="@keeper.Id" class="w-100">
+                        <div class="col">
+                            <span>(@keeper.Round)</span>
+                            <partial name="_PlayerName" model="@keeper.Player" />
+                            <span class="small ml-2">@keeper.YearsRemaining Years Remaining</span>
+                            <span class="font-italic">@keeper.Note</span>
+                            <span class="btn btn-sm btn-secondary float-right">Edit</span>
+                        </div>
+                    </a>
                 </div>
             }
         }

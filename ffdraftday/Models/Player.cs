@@ -14,7 +14,7 @@ namespace ffdraftday.Models
         [MaxLength(3)]
         public string NFLTeam { get; set; }
         [Required]
-        [MaxLength(2)]
+        [MaxLength(3)]
         public string Position { get; set; }
 
         public virtual List<Pick> Picks { get; set; }

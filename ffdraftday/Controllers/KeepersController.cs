@@ -17,14 +17,26 @@ namespace ffdraftday.Controllers
             _repo = repo;
         }
 
+        public IActionResult Create(int teamId)
+        {
+            var team = _repo.teams.Get(teamId);
+            if (team == null) return NotFound();
+            var keeper = new Keeper
+            {
+                TeamId = teamId,
+                Team = team
+            };
+            return View("CreateEdit", keeper);
+        }
+
         public IActionResult Edit(int id)
         {
             var keeper = _repo.keepers.Get(id);
-            return View(keeper);
+            return View("CreateEdit", keeper);
         }
 
         [HttpPost]
-        public IActionResult Edit(Keeper keeper)
+        public IActionResult Save(Keeper keeper)
         {
             if (ModelState.IsValid)
             {
@@ -33,7 +45,7 @@ namespace ffdraftday.Controllers
             }
             keeper.Team = _repo.teams.Get(keeper.TeamId);
             keeper.Player = _repo.players.Get(keeper.PlayerId ?? 0);
-            return View(keeper);
+            return View("CreateEdit", keeper);
         }
 
     }

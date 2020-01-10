@@ -50,7 +50,7 @@ namespace ffdraftday.Repos
         public List<Select2Object> PlayerSelectList(string text)
         {
             var players = Search(text);
-            List<Select2Object> list = players.Select(p => new Select2Object(p.PlayerId, p.Player.Name)).ToList();
+            List<Select2Object> list = players.Select(p => new Select2Object(p.PlayerId, $"{p.Player.Name} ({p.Player.Position} - {p.Player.NFLTeam})")).ToList();
             return list;
         }
 
