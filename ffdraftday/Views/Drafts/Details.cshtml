@@ -21,29 +21,39 @@
     }
 </div>
 <hr />
-<div>
-    <span class="h4 mr-3">Teams</span>
-    <a asp-action="Move" asp-controller="Teams" asp-route-draftId="@Model.Id">Edit Draft Positions</a>
-</div>
-<div class="col-lg-6">
-    @foreach (Team team in Model.Teams.OrderBy(t => t.DraftPosition))
-    {
-        <div class="row my-2 p-2 shadow" data-pos="@team.Id">
-            <a asp-action="Details" asp-controller="Teams" asp-route-id="@team.Id" class="w-100">
-                <div class="h5 col-12">@team.Name</div>
-                <div class="col-12">
-                    @team.Owner
-                </div>
-            </a>
-        </div>
-    }
-</div>
+<div class="col-lg-7">
+    <div>
+        <span class="h4 mr-3">Teams</span>
+        <a asp-action="Move" asp-controller="Teams" asp-route-draftId="@Model.Id">Edit Draft Positions</a>
+    </div>
+    <div>
+        @foreach (Team team in Model.Teams.OrderBy(t => t.DraftPosition))
+        {
+            <div class="row my-2 p-2 shadow" data-pos="@team.Id">
+                <a asp-action="Details" asp-controller="Teams" asp-route-id="@team.Id" class="w-100">
+                    <div class="h5 col-12">@team.Name</div>
+                    <div class="col-12">
+                        @team.Owner
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
 
-<div class="mt-4">
-    @if (Model.Teams != null && Model.RosterPositions != null)
-    {
-        <a asp-action="InitPicks" asp-route-id="@Model.Id" class="btn btn-primary">Initialize Picks</a>
-    }
+    <div class="mt-3">
+        <h4>Trades</h4>
+        @foreach (Trade trade in Model.Trades)
+        {
+            <partial name="_Trade" model="@trade" />
+        }
+    </div>
+
+    <div class="mt-4">
+        @if (Model.Teams != null && Model.RosterPositions != null)
+        {
+            <a asp-action="InitPicks" asp-route-id="@Model.Id" class="btn btn-primary">Initialize Picks</a>
+        }
+    </div>
 </div>
 
 

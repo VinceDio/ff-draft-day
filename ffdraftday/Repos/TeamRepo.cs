@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ffdraftday.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace ffdraftday.Repos
@@ -103,6 +104,13 @@ namespace ffdraftday.Repos
                 }
             }
             return trades;
+        }
+
+        public List<SelectListItem> TeamList(int draftId)
+        {
+            var teams = _db.Team.Where(t => t.DraftId == draftId).OrderBy(t => t.Name).ToList();
+            var list = teams.Select(t => new SelectListItem($"{t.Name} - {t.Owner}", t.Id.ToString())).ToList();
+            return list;
         }
     }
 }

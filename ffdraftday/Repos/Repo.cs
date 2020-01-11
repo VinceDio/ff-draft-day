@@ -14,6 +14,7 @@ namespace ffdraftday.Repos
         public TeamRepo teams;
         public PlayerRepo players;
         public KeeperRepo keepers;
+        public TradeRepo trades;
         public Repo(ffdraftdayContext db)
         {
             _db = db;
@@ -21,6 +22,7 @@ namespace ffdraftday.Repos
             teams = new TeamRepo(_db);
             players = new PlayerRepo(_db);
             keepers = new KeeperRepo(_db);
+            trades = new TradeRepo(_db);
         }
 
 

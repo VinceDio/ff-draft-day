@@ -1,129 +1,94 @@
 ﻿@model ffdraftday.ViewModels.TeamViewModel
 
 @{ var team = Model.Team; }
-<div class="float-right">
-    <h4>@team.Draft.Name</h4>
-</div>
-<div>
-    <span class="h3">@team.Name</span>
-    <a asp-action="Edit" asp-route-id="@team.Id" class="ml-3">Edit</a>
-</div>
-<div>@team.Owner</div>
-<hr />
-<div>
+
+<partial name="_DraftHeader" model="team.Draft" />
+<partial name="_TeamHeader" model="team" />
+<div class="mt-2">
+    <a asp-action="Edit" asp-route-id="@team.Id" class="btn btn-secondary">Edit Team</a>
     <a asp-controller="Drafts" asp-action="Details" asp-route-id="@team.DraftId" class="btn btn-outline-primary">Back to Draft</a>
 </div>
-
-<div class="mt-4">
-    <div>
-        <span class="h4">Trades</span>
-        <a asp-action="Create" asp-controller="Trades" asp-route-teamId="@team.Id" class="btn btn-sm btn-success ml-2">Add</a>
-    </div>
-    <div class="col-lg-7">
-        @if (!Model.Keepers.Any())
-        {
-            <p>None</p>
-        }
-        else
-        {
-            @foreach (Trade trade in Model.Trades)
+<hr />
+<div class="col-lg-7">
+    <div class="mt-4">
+        <div>
+            <span class="h4">Trades</span>
+            <a asp-action="Create" asp-controller="Trades" asp-route-teamId="@team.Id" class="btn btn-sm btn-success ml-2">Add</a>
+        </div>
+        <div>
+            @if (!Model.Trades.Any())
             {
-                <div class="row my-2 shadow p-2">
-                    <div class="col-6">
-                        <div class="font-weight-bold">@trade.Team1.Name</div>
-                        @foreach (TradeItem item in trade.Items.Where(i => i.TeamId == trade.Team1.Id))
-                        {
-                            @if (item.IsPlayer)
-                            {
-                                <div>@($"{item.Player.Name} ({item.Round})")</div>
-                            }
-                            else
-                            {
-                                <div>Pick @item.Round.@item.Selection</div>
-                            }
-                        }
-                    </div>
-                    <div class="col-6">
-                        <div class="font-weight-bold">@trade.Team2.Name</div>
-                        @foreach (TradeItem item in trade.Items.Where(i => i.TeamId == trade.Team2.Id))
-                        {
-                            <div>
-                                @if (item.IsPlayer)
-                                {
-                                    <partial name="_PlayerName" model="@item.Player" />
-                                }
-                                else
-                                {
-                                    <span>Pick @item.Round.@item.Selection</span>
-                                }
+                <p>None</p>
+            }
+            else
+            {
+                @foreach (Trade trade in Model.Trades)
+                {
+                    <partial name="_Trade" model="@trade" />
+                }
+            }
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <div>
+            <span class="h4">Keepers</span>
+            <a asp-action="Create" asp-controller="Keepers" asp-route-teamId="@team.Id" class="btn btn-sm btn-success ml-2">Add</a>
+        </div>
+        <div>
+            @if (!Model.Keepers.Any())
+            {
+                <p>None</p>
+            }
+            else
+            {
+                foreach (Keeper keeper in Model.Keepers)
+                {
+                    <div class="row my-2 shadow p-2">
+                        <a asp-action="Edit" asp-controller="Keepers" asp-route-id="@keeper.Id" class="w-100">
+                            <div class="col">
+                                <span>(@keeper.Round)</span>
+                                <partial name="_PlayerName" model="@keeper.Player" />
+                                <span class="small ml-2">@keeper.YearsRemaining Years Remaining</span>
+                                <span class="font-italic">@keeper.Note</span>
+                                <span class="btn btn-sm btn-secondary float-right">Edit</span>
                             </div>
-                        }
+                        </a>
                     </div>
-                </div>
-
+                }
             }
-        }
+        </div>
     </div>
-</div>
 
-<div class="mt-4">
-    <div>
-        <span class="h4">Keepers</span>
-        <a asp-action="Create" asp-controller="Keepers" asp-route-teamId="@team.Id" class="btn btn-sm btn-success ml-2">Add</a>
-    </div>
-    <div class="col-lg-7">
-        @if (!Model.Keepers.Any())
-        {
-            <p>None</p>
-        }
-        else
-        {
-            foreach (Keeper keeper in Model.Keepers)
+    <div class="mt-4">
+        <h4>Picks</h4>
+        <div>
+            @if (!Model.Picks.Any())
             {
-                <div class="row my-2 shadow p-2">
-                    <a asp-action="Edit" asp-controller="Keepers" asp-route-id="@keeper.Id" class="w-100">
-                        <div class="col">
-                            <span>(@keeper.Round)</span>
-                            <partial name="_PlayerName" model="@keeper.Player" />
-                            <span class="small ml-2">@keeper.YearsRemaining Years Remaining</span>
-                            <span class="font-italic">@keeper.Note</span>
-                            <span class="btn btn-sm btn-secondary float-right">Edit</span>
+                <div>Not loaded</div>
+            }
+            else
+            {
+                foreach (Pick pick in Model.Picks.OrderBy(p => p.OverallPick))
+                {
+                    <div class="row my-2 p-2 shadow">
+                        <div class="col-5">
+                            <div class="font-weight-bold">@($"{pick.Round}.{pick.Selection} ({pick.OverallPick})")</div>
+                            <div class="font-italic">@pick.Note</div>
                         </div>
-                    </a>
-                </div>
-            }
-        }
-    </div>
-</div>
-
-<div class="mt-4">
-    <h4>Picks</h4>
-    <div class="col-lg-7">
-        @if (!Model.Picks.Any())
-        {
-            <div>Not loaded</div>
-        }
-        else
-        {
-            foreach (Pick pick in Model.Picks.OrderBy(p => p.OverallPick))
-            {
-                <div class="row my-2 p-2 shadow">
-                    <div class="col-5">
-                        <div class="font-weight-bold">@($"{pick.Round}.{pick.Selection} ({pick.OverallPick})")</div>
-                        <div class="font-italic">@pick.Note</div>
-                    </div>
-                    <div class="col-7">
-                        @if (pick.Player != null)
-                        {
-                            <partial name="_PlayerName" model="@pick.Player" />
-                            @if (pick.IsKeeper)
+                        <div class="col-7">
+                            @if (pick.Player != null)
                             {
-                                <span class="ml-2">(K)</span>
+                                <partial name="_PlayerName" model="@pick.Player" />
+                                @if (pick.IsKeeper)
+                                {
+                                    <span class="ml-2">(K)</span>
+                                }
                             }
-                        }
+                        </div>
                     </div>
-                </div>
+                }
             }
-        }
+        </div>
     </div>
 </div>

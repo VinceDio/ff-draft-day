@@ -163,11 +163,11 @@ namespace ffdraftday.Repos
             {
                 foreach (TradeItem item in trade.Items.Where(i => !i.IsPlayer))
                 {
-                    var fromTeam = (item.TeamId == trade.Team1.Id ? trade.Team2 : trade.Team1);
-                    var pick = picks.Where(p => p.Round == item.Round && p.Selection == item.Selection && p.TeamId == fromTeam.Id).FirstOrDefault();
-                    if (pick == null) throw new Exception($"Could not move traded pick: {item.Round}.{item.Selection} from {fromTeam.Name}");
-                    pick.TeamId = item.TeamId;
-                    pick.Note = "From " + fromTeam.Name;
+                    var toTeam = (item.FromTeamId == trade.Team1.Id ? trade.Team2 : trade.Team1);
+                    var pick = picks.Where(p => p.Round == item.Round && p.Selection == item.Selection && p.TeamId == item.FromTeamId).FirstOrDefault();
+                    if (pick == null) throw new Exception($"Could not move traded pick: {item.Round}.{item.Selection} from {item.FromTeam.Name}");
+                    pick.TeamId = toTeam.Id;
+                    pick.Note = "From " + item.FromTeam.Name;
                 }
             }
             var invalidTeams = picks.GroupBy(p => p.TeamId).Where(g => g.Count() != draft.Rounds).Select(g => g.Key).ToList();

@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    $('#player-list').select2({
+    $('.player-list').select2({
         placeholder: 'Select Player',
         minimumInputLength: 2,
         selectOnClose: true,

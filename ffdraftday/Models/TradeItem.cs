@@ -9,14 +9,14 @@ namespace ffdraftday.Models
     {
         public int Id { get; set; }
         public int TradeId { get; set; }
-        public int TeamId { get; set; }
+        public int FromTeamId { get; set; }
         public bool IsPlayer { get; set; }
         public int Round { get; set; }
         public int? Selection { get; set; }
         public int? PlayerId { get; set; }
 
         public Trade Trade { get; set; }
-        public Team Team { get; set; }
+        public Team FromTeam { get; set; }
         public Player Player { get; set; }
     }
 }

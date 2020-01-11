@@ -1,0 +1,20 @@
+﻿@model ffdraftday.ViewModels.TradeViewModelTeam
+
+<div class="col-6">
+    <div class="font-weight-bold">@Model.Team.Name</div>
+    <div class="font-italic small mb-1">Trades away...</div>
+    @foreach (TradeItem item in Model.Items.OrderBy(i => i.PlayerId))
+    {
+        <div>
+            @if (item.IsPlayer)
+            {
+                <span>(@item.Round)</span>
+                <partial name="_PlayerName" model="@item.Player" />
+            }
+            else
+            {
+                <div>Pick @item.Round.@item.Selection</div>
+            }
+        </div>
+    }
+</div>

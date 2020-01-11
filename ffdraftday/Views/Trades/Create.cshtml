@@ -1,0 +1,19 @@
+﻿@model Trade
+
+<partial name="_TeamHeader" model="Model.Team1" />
+<hr />
+<h3>New Trade</h3>
+<form asp-action="Create" method="post">
+    <input type="hidden" asp-for="Team1Id" />
+    <input type="hidden" asp-for="DraftId" />
+    <div>
+        <label class="label">With Team:</label>
+        <select name="team2Id" asp-items="ViewBag.TeamList" class="form-control" required>
+            <option>-- Select Team --</option>
+        </select>
+    </div>
+    <div class="mt-2">
+        <input type="submit" value="Continue" class="btn btn-success" />
+        <a asp-action="Details" asp-controller="Teams" asp-route-id="@Model.Team1Id" class="btn btn-outline-primary">Cancel</a>
+    </div>
+</form>

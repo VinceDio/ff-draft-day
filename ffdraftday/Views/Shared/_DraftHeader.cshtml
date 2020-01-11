@@ -1,5 +1,5 @@
 ﻿@model Draft
 
 <div class="float-right">
-    <h5>@Model.Name</h5>
+    <a asp-action="Details" asp-controller="Drafts" asp-route-id="@Model.Id" class="h5">@Model.Name</a>
 </div>

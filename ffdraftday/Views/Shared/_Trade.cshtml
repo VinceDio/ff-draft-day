@@ -1,0 +1,18 @@
+﻿@model Trade
+
+@{ Trade trade = Model; }
+
+<div class="row my-2 shadow p-2">
+    <a asp-action="Edit" asp-controller="Trades" asp-route-id="@trade.Id" class="w-100">
+        <div class="row">
+            @{
+                var team1 = new ffdraftday.ViewModels.TradeViewModelTeam { Team = trade.Team1 };
+                team1.Items = trade.Items.Where(i => i.FromTeamId == trade.Team1Id).ToList();
+                var team2 = new ffdraftday.ViewModels.TradeViewModelTeam { Team = trade.Team2 };
+                team2.Items = trade.Items.Where(i => i.FromTeamId == trade.Team2Id).ToList();
+            }
+            <partial name="_TradeTeam" model="team1" />
+            <partial name="_TradeTeam" model="team2" />
+        </div>
+    </a>
+</div>

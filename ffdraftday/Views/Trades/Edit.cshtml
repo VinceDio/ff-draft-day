@@ -1,0 +1,18 @@
+﻿@model ffdraftday.ViewModels.TradeViewModel
+
+<partial name="_DraftHeader" model="@Model.Trade.Draft" />
+
+<h4>Edit Trade</h4>
+<hr />
+<div class="row">
+    <div class="col-12 col-lg-6">
+        <partial name="_TeamSection" model="Model.TradeTeam1" />
+    </div>
+    <div class="col-12 col-lg-6">
+        <partial name="_TeamSection" model="Model.TradeTeam2" />
+    </div>
+</div>
+<div class="mt-2">
+    <a asp-action="Delete" class="btn btn-danger" onclick="return confirm('Delete this trade?')">Delete</a>
+    <a asp-action="Details" asp-controller="Teams" asp-route-id="@Model.Trade.Team1.Id" class="btn btn-outline-primary">Return to Team</a>
+</div>

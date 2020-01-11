@@ -1,0 +1,50 @@
+﻿@model ffdraftday.ViewModels.TradeViewModelTeam
+
+@{ var team = Model.Team; }
+
+<div class="mt-2 card">
+    <div class="card-header">
+        <partial name="_TeamHeader" model="@team" />
+        <div class="font-italic mb-2">Trades Away</div>
+    </div>
+    <div class="card-body">
+        <h5>Picks</h5>
+        <div class="my-2">
+            @foreach (Pick pick in team.Picks.OrderBy(p => p.Round).ThenBy(p => p.Selection))
+            {
+                <div>
+                    <div>
+                        @if (Model.Items.Any(i => i.Round == pick.Round && i.Selection == pick.Selection))
+                        {
+                            <input type="checkbox" checked />
+                        }
+                        else
+                        {
+                            <input type="checkbox" />
+                        }
+                        <span>@($"{pick.Round}.{pick.Selection} ({pick.OverallPick})")</span>
+                        <span class="font-italic">@pick.Note</span>
+                    </div>
+                </div>
+            }
+        </div>
+        <h5>Players</h5>
+        <div class="players" style="min-height: 60px;">
+            @foreach (TradeItem item in Model.Items.Where(i => i.IsPlayer))
+            {
+                <div>
+                    <partial name="_PlayerName" model="item.Player" />
+                    <a href="#" class="text-danger">Remove</a>
+                </div>
+            }
+        </div>
+        <div class="row p-2">
+            <select class="player-list col-7">
+                <option>--Select Player--</option>
+            </select>
+            <label class="label ml-2">Round:</label>
+            <input type="text" name="round" class="col-1 mr-2" />
+            <button class="btn btn-sm btn-success">Add</button>
+        </div>
+    </div>
+</div>

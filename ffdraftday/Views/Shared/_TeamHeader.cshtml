@@ -1,0 +1,6 @@
+﻿@model Team
+
+<div>
+    <a asp-action="Details" asp-controller="Teams" asp-route-id="@Model.Id" class="h4">@Model.Name</a>
+    <div>@Model.Owner</div>
+</div>

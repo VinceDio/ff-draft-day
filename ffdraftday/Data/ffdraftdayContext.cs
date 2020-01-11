@@ -34,7 +34,7 @@ namespace ffdraftday.Models
 
             builder.Entity<TradeItem>().HasOne<Trade>(a => a.Trade).WithMany(b => b.Items).HasForeignKey(a => a.TradeId).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<TradeItem>().HasOne<Player>(a => a.Player).WithMany(b => b.TradeItems).HasForeignKey(a => a.PlayerId).OnDelete(DeleteBehavior.Restrict);
-            builder.Entity<TradeItem>().HasOne<Team>(a => a.Team).WithMany(b => b.TradeItems).HasForeignKey(a => a.TeamId).OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<TradeItem>().HasOne<Team>(a => a.FromTeam).WithMany(b => b.TradeItems).HasForeignKey(a => a.FromTeamId).OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Trade>().HasOne<Draft>(a => a.Draft).WithMany(b => b.Trades).HasForeignKey(a => a.DraftId).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Trade>().HasOne<Team>(a => a.Team1).WithMany(b => b.Trades1).HasForeignKey(a => a.Team1Id).OnDelete(DeleteBehavior.Restrict);

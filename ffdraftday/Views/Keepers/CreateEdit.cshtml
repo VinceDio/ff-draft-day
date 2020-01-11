@@ -1,7 +1,5 @@
 ﻿@model Keeper
-
-<h3>@Model.Team.Name</h3>
-<div>@Model.Team.Owner</div>
+<partial name="_TeamHeader" model="Model.Team" />
 
 <h4>Keeper</h4>
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -10,7 +8,7 @@
     <input type="hidden" asp-for="@Model.TeamId" />
     <div class="form-group">
         <label class="label">Player:</label>
-        <select asp-for="@Model.PlayerId" class="form-control" id="player-list" required>
+        <select asp-for="@Model.PlayerId" class="form-control player-list" required>
             <option value="@Model.PlayerId">@Model.Player?.Name</option>
         </select>
         <span asp-validation-for="Player" class="text-danger"></span>
@@ -34,8 +32,3 @@
         <a asp-action="Details" asp-controller="Teams" asp-route-id="@Model.TeamId" class="btn btn-outline-primary">Cancel</a>
     </div>
 </form>
-
-@section Scripts {
-    <script src="~/js/select-lists.js"></script>
-}
-

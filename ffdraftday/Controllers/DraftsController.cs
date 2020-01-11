@@ -34,7 +34,7 @@ namespace ffdraftday.Controllers
             {
                 return NotFound();
             }
-
+            draft.Trades = _repo.trades.List(id);
             return View(draft);
         }
 
