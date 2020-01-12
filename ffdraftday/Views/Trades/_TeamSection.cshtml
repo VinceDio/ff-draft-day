@@ -14,13 +14,14 @@
             {
                 <div>
                     <div>
-                        @if (Model.Items.Any(i => i.Round == pick.Round && i.Selection == pick.Selection))
+                        @{ TradeItem item = Model.Items.FirstOrDefault(i => i.Round == pick.Round && i.Selection == pick.Selection); }
+                        @if (item != null)
                         {
-                            <input type="checkbox" checked />
+                            <input type="checkbox" onclick="RemoveItem(@item.Id)" checked />
                         }
                         else
                         {
-                            <input type="checkbox" />
+                            <input type="checkbox" onclick="AddItem(@team.Id, @pick.Round, @pick.Selection, null)" />
                         }
                         <span>@($"{pick.Round}.{pick.Selection} ({pick.OverallPick})")</span>
                         <span class="font-italic">@pick.Note</span>
@@ -34,17 +35,20 @@
             {
                 <div>
                     <partial name="_PlayerName" model="item.Player" />
-                    <a href="#" class="text-danger">Remove</a>
+                    <form asp-action="RemoveItem" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <input type="submit" value="Remove" class="btn btn-danger btn-sm" />
+                    </form>
                 </div>
             }
         </div>
         <div class="row p-2">
-            <select class="player-list col-7">
+            <select id="player-select@(team.Id)" class="player-list col-7">
                 <option>--Select Player--</option>
             </select>
             <label class="label ml-2">Round:</label>
-            <input type="text" name="round" class="col-1 mr-2" />
-            <button class="btn btn-sm btn-success">Add</button>
+            <input type="text" name="round" id="round-input@(team.Id)" class="col-2 mr-2" />
+            <button onclick="AddPlayer(@team.Id)" class="btn btn-sm btn-success">Add</button>
         </div>
     </div>
 </div>

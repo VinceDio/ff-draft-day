@@ -16,3 +16,37 @@
     <a asp-action="Delete" class="btn btn-danger" onclick="return confirm('Delete this trade?')">Delete</a>
     <a asp-action="Details" asp-controller="Teams" asp-route-id="@Model.Trade.Team1.Id" class="btn btn-outline-primary">Return to Team</a>
 </div>
+
+@section Scripts {
+<script>
+    function AddPlayer(teamId) {
+        let playerId = $('#player-select' + teamId.toString()).val();
+        let round = $('#round-input' + teamId.toString()).val();
+        AddItem(teamId, round, null, playerId);
+    }
+
+    function AddItem(fromTeamId, round, selection, playerId) {
+        $.ajax({
+            url: '/Trades/AddItem/',
+            dataType: 'json',
+            data: { tradeId: @Model.Trade.Id, fromTeamId, round, selection, playerId },
+            method: 'post',
+            success: function (data) {
+                alert(data);
+            },
+            error: function (err) { alert('Could not remove item: ' + err); }
+        });
+    }
+
+    function RemoveItem(id) {
+        $.ajax({
+            url: '/Trades/RemoveItem/' + id,
+            dataType: 'json',
+            method: 'post',
+            success: function (data) {
+            },
+            error: function (err) { alert('Could not remove item: ' + err); }
+        });
+    };
+</script>
+}

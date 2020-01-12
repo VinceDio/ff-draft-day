@@ -93,5 +93,27 @@ namespace ffdraftday.Repos
             }
             return vm;
         }
+
+        public void RemoveItem(int id)
+        {
+            var item = _db.TradeItem.Find(id);
+            if (item == null) return;
+            _db.TradeItem.Remove(item);
+            _db.SaveChanges();
+        }
+
+        public void AddItem(TradeItem item)
+        {
+            if (item.IsPlayer)
+            {
+                if (_db.TradeItem.Any(i => i.TradeId == item.TradeId && i.PlayerId == item.PlayerId)) throw new Exception("Player already on this trade");
+            }
+            else
+            {
+                if (_db.TradeItem.Any(i => i.FromTeamId == item.FromTeamId && i.Round == item.Round && i.Selection == item.Selection)) throw new Exception("This pick is already on this trade.");
+            }
+            _db.TradeItem.Add(item);
+            _db.SaveChanges();
+        }
     }
 }

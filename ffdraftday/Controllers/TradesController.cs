@@ -39,5 +39,29 @@ namespace ffdraftday.Controllers
             if (vm == null) return NotFound();
             return View(vm);
         }
+
+        [HttpPost]
+        public JsonResult RemoveItem(int id)
+        {
+            _repo.trades.RemoveItem(id);
+            return Json("Success");
+        }
+
+        [HttpPost]
+        public PartialViewResult AddItem(int tradeId, int fromTeamId, int round, int? selection, int? playerId)
+        {
+            var item = new TradeItem
+            {
+                TradeId = tradeId,
+                FromTeamId = fromTeamId,
+                Round = round,
+                Selection = selection,
+                PlayerId = playerId,
+                IsPlayer = playerId != null
+            };
+            _repo.trades.AddItem(item);
+            var vm = _repo.trades.GetVM(tradeId);
+            return PartialView("_TeamSection", vm.TradeTeam1.Team.Id == fromTeamId ? vm.TradeTeam1 : vm.TradeTeam2);
+        }
     }
 }
