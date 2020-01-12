@@ -11,11 +11,14 @@ namespace ffdraftday.Repos
     public class TradeRepo
     {
         private ffdraftdayContext _db;
+        private DraftRepo _draftRepo;
 
-        public TradeRepo(ffdraftdayContext db)
+        public TradeRepo(ffdraftdayContext db, DraftRepo draftRepo)
         {
             _db = db;
+            _draftRepo = draftRepo;
         }
+
         internal Trade Get(int id)
         {
             var trade =_db.Trade
@@ -41,6 +44,16 @@ namespace ffdraftday.Repos
         public void Add(Trade trade)
         {
             _db.Trade.Add(trade);
+            _db.SaveChanges();
+        }
+
+        internal void Delete(int id)
+        {
+            var items = _db.TradeItem.Where(t => t.TradeId == id);
+            _db.TradeItem.RemoveRange(items);
+
+            var trade = _db.Trade.Find(id);
+            _db.Trade.Remove(trade);
             _db.SaveChanges();
         }
 
@@ -94,12 +107,14 @@ namespace ffdraftday.Repos
             return vm;
         }
 
-        public void RemoveItem(int id)
+        public TradeItem RemoveItem(int id)
         {
             var item = _db.TradeItem.Find(id);
-            if (item == null) return;
+            if (item == null) return null;
             _db.TradeItem.Remove(item);
             _db.SaveChanges();
+            UpdateDraftPicksFromItem(item);
+            return item;
         }
 
         public void AddItem(TradeItem item)
@@ -114,6 +129,13 @@ namespace ffdraftday.Repos
             }
             _db.TradeItem.Add(item);
             _db.SaveChanges();
+            UpdateDraftPicksFromItem(item);
+        }
+
+        private void UpdateDraftPicksFromItem(TradeItem item)
+        {
+            var draftId = _db.Trade.Find(item.TradeId).DraftId;
+            _draftRepo.InitPicks(draftId);
         }
     }
 }

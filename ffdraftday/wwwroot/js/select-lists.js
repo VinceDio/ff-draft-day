@@ -1,4 +1,8 @@
 ﻿$(document).ready(function () {
+    SetSelect2Lists();
+});
+
+function SetSelect2Lists() {
     $('.player-list').select2({
         placeholder: 'Select Player',
         minimumInputLength: 2,
@@ -17,4 +21,4 @@
             }
         }
     });
-});
+}

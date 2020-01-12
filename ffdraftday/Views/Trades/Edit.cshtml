@@ -13,8 +13,10 @@
     </div>
 </div>
 <div class="mt-2">
-    <a asp-action="Delete" class="btn btn-danger" onclick="return confirm('Delete this trade?')">Delete</a>
-    <a asp-action="Details" asp-controller="Teams" asp-route-id="@Model.Trade.Team1.Id" class="btn btn-outline-primary">Return to Team</a>
+    <form asp-action="Delete" asp-route-id="@Model.Trade.Id" method="post">
+        <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Delete this trade?')">
+        <a asp-action="Details" asp-controller="Teams" asp-route-id="@Model.Trade.Team1.Id" class="btn btn-outline-primary">Return to Team</a>
+    </form>
 </div>
 
 @section Scripts {
@@ -26,24 +28,27 @@
     }
 
     function AddItem(fromTeamId, round, selection, playerId) {
+        var section = $("#team-section-" + fromTeamId);
         $.ajax({
             url: '/Trades/AddItem/',
-            dataType: 'json',
             data: { tradeId: @Model.Trade.Id, fromTeamId, round, selection, playerId },
             method: 'post',
-            success: function (data) {
-                alert(data);
+            success: function (response) {
+                section.html(response);
+                SetSelect2Lists();
             },
-            error: function (err) { alert('Could not remove item: ' + err); }
+            error: function (err) { alert('Could not add item: ' + err); }
         });
     }
 
-    function RemoveItem(id) {
+    function RemoveItem(fromTeamId, id) {
+        var section = $("#team-section-" + fromTeamId);
         $.ajax({
             url: '/Trades/RemoveItem/' + id,
-            dataType: 'json',
             method: 'post',
-            success: function (data) {
+            success: function (response) {
+                section.html(response);
+                SetSelect2Lists();
             },
             error: function (err) { alert('Could not remove item: ' + err); }
         });

@@ -28,7 +28,11 @@
         <input asp-for="@Model.Note" class="form-control" />
     </div>
     <div class="mt-2">
-        <input type="submit" value="Save" class="btn btn-primary" />
+        <input type="submit" name="action" value="Save" class="btn btn-primary" />
+        @if (Model.Id != 0)
+        {
+            <input type="submit" name="action" value="Delete" class="btn btn-danger" onclick="return confirm('Delete Keeper?')" />
+        }
         <a asp-action="Details" asp-controller="Teams" asp-route-id="@Model.TeamId" class="btn btn-outline-primary">Cancel</a>
     </div>
 </form>

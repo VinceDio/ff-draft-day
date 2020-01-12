@@ -31,5 +31,12 @@ namespace ffdraftday.Repos
             else _db.Update(keeper);
             _db.SaveChanges();
         }
+
+        internal void Delete(int id)
+        {
+            var keeper = _db.Keeper.Find(id);
+            _db.Remove(keeper);
+            _db.SaveChanges();
+        }
     }
 }

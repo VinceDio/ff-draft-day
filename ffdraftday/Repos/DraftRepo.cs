@@ -93,26 +93,19 @@ namespace ffdraftday.Repos
         {
             var draft = _db.Draft.Find(draftId);
             if (draft == null) throw new Exception("Invalid draft id");
-            draft.ReadyToDraft = false;
-            _db.Update(draft);
-            _db.SaveChanges();
-            //if (draft.Picks != null) throw new Exception("Picks already found for this draft.");
+            ChangeDraftStatus(draftId, "Setup");
             var existingPicks = _db.Pick.Where(p => p.DraftId == draftId);
             if (existingPicks != null)
             {
                 _db.Pick.RemoveRange(existingPicks);
                 _db.SaveChanges();
             }
-            if (draft.NumberOfTeams < 4) throw new Exception("Must have at least 4 teams");
-            if (draft.Rounds < 4) throw new Exception("Must assign at least 4 roster positions.");
             var picks = LoadPicks(draft);
             try
             {
                 picks = MoveTradedPicks(picks, draft);
                 picks = LoadKeepers(picks, draft);
                 _db.Pick.AddRange(picks);
-                draft.ReadyToDraft = true;
-                _db.Update(draft);
                 _db.SaveChanges();
             }
             catch (Exception ex)
@@ -170,18 +163,6 @@ namespace ffdraftday.Repos
                     pick.Note = "From " + item.FromTeam.Name;
                 }
             }
-            var invalidTeams = picks.GroupBy(p => p.TeamId).Where(g => g.Count() != draft.Rounds).Select(g => g.Key).ToList();
-            if (invalidTeams.Any())
-            {
-                string invalidTeamNames = "";
-                foreach (int id in invalidTeams)
-                {
-                    var teamName = _db.Team.Find(id).Name;
-                    if (invalidTeamNames != "") invalidTeamNames += ", ";
-                    invalidTeamNames += teamName;
-                }
-                throw new Exception("One or more teams does not have correct number of picks due to unbalanced trade: " + invalidTeamNames);
-            }
             return picks;
         }
 
@@ -201,6 +182,43 @@ namespace ffdraftday.Repos
                 }
             }
             return picks;
+        }
+
+        public void ChangeDraftStatus(int draftId, string status)
+        {
+            var draft = _db.Draft.Find(draftId);
+            if (draft == null) throw new Exception("Invalid draft id");
+            draft.Status = status;
+            _db.Update(draft);
+            _db.SaveChanges();
+        }
+
+        public List<string> ValidateDraft(int draftId)
+        {
+            ChangeDraftStatus(draftId, "Setup");
+            var draft = Get(draftId);
+            var errors = new List<string>();
+            if (draft.NumberOfTeams < 4) errors.Add("Must have at least 4 teams");
+            if (draft.Rounds < 4) errors.Add("Must assign at least 4 roster positions.");
+            var picksPerTeam = draft.Picks.GroupBy(p => p.TeamId).Select(g => new { g.Key, PickCount = g.Count() }).ToList();
+
+            var picks = _db.Pick.Where(p => p.DraftId == draftId).ToList();
+            picksPerTeam = picks.GroupBy(p => p.TeamId).Select(g => new { g.Key, PickCount = g.Count() }).ToList();
+
+            var invalidTeams = picksPerTeam.Where(p => p.PickCount != draft.Rounds).ToList();
+            if (invalidTeams.Any())
+            {
+                string invalidTeamNames = "";
+                foreach (var team in invalidTeams)
+                {
+                    var teamName = _db.Team.Find(team.Key).Name;
+                    if (invalidTeamNames != "") invalidTeamNames += ", ";
+                    invalidTeamNames += teamName;
+                }
+                errors.Add("One or more teams does not have correct number of picks due to unbalanced trade: " + invalidTeamNames);
+            }
+            if (!errors.Any()) ChangeDraftStatus(draftId, "Ready");
+            return errors;
         }
     }
 }

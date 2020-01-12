@@ -11,14 +11,10 @@
     </div>
     <div>@Model.Location</div>
     <div class="mb-2">@Model.StartTime.ToString("dddd, MMMM d, yyyy")</div>
-    @if (Model.ReadyToDraft)
-    {
-        <div class="text-success">Ready to Draft</div>
-    }
-    else
-    {
-        <div class="text-danger">Needs Initialized</div>
-    }
+    <div>
+        <label class="label">Status:</label>
+        <span>@Model.Status</span>
+    </div>
 </div>
 <hr />
 <div class="col-lg-7">

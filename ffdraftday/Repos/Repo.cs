@@ -22,7 +22,7 @@ namespace ffdraftday.Repos
             teams = new TeamRepo(_db);
             players = new PlayerRepo(_db);
             keepers = new KeeperRepo(_db);
-            trades = new TradeRepo(_db);
+            trades = new TradeRepo(_db, drafts);
         }
 
 

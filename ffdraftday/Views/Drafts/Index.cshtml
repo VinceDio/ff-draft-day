@@ -23,14 +23,7 @@
                         <div>@draft.StartTime.ToString("dddd MMMM d, yyyy")</div>
                     </div>
                     <div class="card-footer">
-                        @if (draft.ReadyToDraft)
-                        {
-                            <div class="text-success">Ready to Draft</div>
-                        }
-                        else
-                        {
-                            <div class="text-danger">Needs Initialized</div>
-                        }
+                        <div class="@(draft.Status == "Ready" ? "text-success" : "text-danger")">@draft.Status</div>
                     </div>
                 </a>
             </div>

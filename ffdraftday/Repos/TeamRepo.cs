@@ -77,7 +77,11 @@ namespace ffdraftday.Repos
             var vm = new ViewModels.TeamViewModel();
             vm.Team = Get(id);
             if (vm.Team == null) return null;
-            vm.Picks = _db.Pick.Where(p => p.TeamId == id).OrderBy(p => p.Round).ThenBy(p => p.Selection).ToList();
+            vm.Picks = _db.Pick
+                .Include(p => p.Player)
+                .Where(p => p.TeamId == id)
+                .OrderBy(p => p.Round).ThenBy(p => p.Selection)
+                .ToList();
             vm.Trades = _db.Trade
                 .Include(t => t.Items).ThenInclude(i => i.Player)
                 .Include(t => t.Team1)

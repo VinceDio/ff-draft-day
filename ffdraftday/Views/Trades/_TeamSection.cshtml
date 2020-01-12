@@ -1,54 +1,53 @@
 ﻿@model ffdraftday.ViewModels.TradeViewModelTeam
 
 @{ var team = Model.Team; }
-
-<div class="mt-2 card">
-    <div class="card-header">
-        <partial name="_TeamHeader" model="@team" />
-        <div class="font-italic mb-2">Trades Away</div>
-    </div>
-    <div class="card-body">
-        <h5>Picks</h5>
-        <div class="my-2">
-            @foreach (Pick pick in team.Picks.OrderBy(p => p.Round).ThenBy(p => p.Selection))
-            {
-                <div>
-                    <div>
-                        @{ TradeItem item = Model.Items.FirstOrDefault(i => i.Round == pick.Round && i.Selection == pick.Selection); }
-                        @if (item != null)
-                        {
-                            <input type="checkbox" onclick="RemoveItem(@item.Id)" checked />
-                        }
-                        else
-                        {
-                            <input type="checkbox" onclick="AddItem(@team.Id, @pick.Round, @pick.Selection, null)" />
-                        }
-                        <span>@($"{pick.Round}.{pick.Selection} ({pick.OverallPick})")</span>
-                        <span class="font-italic">@pick.Note</span>
-                    </div>
+    <div id="team-section-@(team.Id)">
+        <div class="mt-2 card">
+            <div class="card-header">
+                <partial name="_TeamHeader" model="@team" />
+                <div class="font-italic mb-2">Trades Away</div>
+            </div>
+            <div class="card-body">
+                <h5>Picks</h5>
+                <div class="my-2">
+                    @foreach (Pick pick in team.Picks.OrderBy(p => p.Round).ThenBy(p => p.Selection))
+                    {
+                        <div>
+                            <div>
+                                @{ TradeItem item = Model.Items.FirstOrDefault(i => i.Round == pick.Round && i.Selection == pick.Selection); }
+                                @if (item != null)
+                                {
+                                    <input type="checkbox" onclick="RemoveItem(@team.Id, @item.Id)" checked />
+                                }
+                                else
+                                {
+                                    <input type="checkbox" onclick="AddItem(@team.Id, @pick.Round, @pick.Selection, null)" />
+                                }
+                                <span>@($"{pick.Round}.{pick.Selection} ({pick.OverallPick})")</span>
+                                <span class="font-italic">@pick.Note</span>
+                            </div>
+                        </div>
+                    }
                 </div>
-            }
-        </div>
-        <h5>Players</h5>
-        <div class="players" style="min-height: 60px;">
-            @foreach (TradeItem item in Model.Items.Where(i => i.IsPlayer))
-            {
-                <div>
-                    <partial name="_PlayerName" model="item.Player" />
-                    <form asp-action="RemoveItem" method="post" class="d-inline">
-                        <input type="hidden" name="id" value="@item.Id" />
-                        <input type="submit" value="Remove" class="btn btn-danger btn-sm" />
-                    </form>
+                <h5>Players</h5>
+                <div class="players" style="min-height: 60px;">
+                    @foreach (TradeItem item in Model.Items.Where(i => i.IsPlayer))
+                    {
+                        <div class="py-1">
+                            <span>(@item.Round)</span>
+                            <partial name="_PlayerName" model="item.Player" />
+                            <span class="btn btn-danger btn-sm" onclick="RemoveItem(@team.Id, @item.Id)">Remove</span>
+                        </div>
+                    }
                 </div>
-            }
-        </div>
-        <div class="row p-2">
-            <select id="player-select@(team.Id)" class="player-list col-7">
-                <option>--Select Player--</option>
-            </select>
-            <label class="label ml-2">Round:</label>
-            <input type="text" name="round" id="round-input@(team.Id)" class="col-2 mr-2" />
-            <button onclick="AddPlayer(@team.Id)" class="btn btn-sm btn-success">Add</button>
+                <div class="row p-2">
+                    <select id="player-select@(team.Id)" class="player-list col-7">
+                        <option>--Select Player--</option>
+                    </select>
+                    <label class="label ml-2">Round:</label>
+                    <input type="text" name="round" id="round-input@(team.Id)" class="col-2 mr-2" />
+                    <button onclick="AddPlayer(@team.Id)" class="btn btn-sm btn-success">Add</button>
+                </div>
+            </div>
         </div>
     </div>
-</div>

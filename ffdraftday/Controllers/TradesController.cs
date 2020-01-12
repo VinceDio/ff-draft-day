@@ -41,10 +41,18 @@ namespace ffdraftday.Controllers
         }
 
         [HttpPost]
-        public JsonResult RemoveItem(int id)
+        public IActionResult Delete(int id)
         {
-            _repo.trades.RemoveItem(id);
-            return Json("Success");
+            var trade = _repo.trades.Get(id);
+            _repo.trades.Delete(id);
+            return RedirectToAction("Details", "Drafts", new { id = trade.DraftId });
+        }
+
+        [HttpPost]
+        public PartialViewResult RemoveItem(int id)
+        {
+            var item = _repo.trades.RemoveItem(id);
+            return UpdateTeamView(item.TradeId, item.FromTeamId);
         }
 
         [HttpPost]
@@ -60,8 +68,13 @@ namespace ffdraftday.Controllers
                 IsPlayer = playerId != null
             };
             _repo.trades.AddItem(item);
+            return UpdateTeamView(tradeId, fromTeamId);
+        }
+
+        private PartialViewResult UpdateTeamView(int tradeId, int teamId)
+        {
             var vm = _repo.trades.GetVM(tradeId);
-            return PartialView("_TeamSection", vm.TradeTeam1.Team.Id == fromTeamId ? vm.TradeTeam1 : vm.TradeTeam2);
+            return PartialView("_TeamSection", vm.TradeTeam1.Team.Id == teamId ? vm.TradeTeam1 : vm.TradeTeam2);
         }
     }
 }

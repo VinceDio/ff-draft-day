@@ -36,8 +36,13 @@ namespace ffdraftday.Controllers
         }
 
         [HttpPost]
-        public IActionResult Save(Keeper keeper)
+        public IActionResult Save(Keeper keeper, string action)
         {
+            if (action == "Delete")
+            {
+                _repo.keepers.Delete(keeper.Id);
+                return RedirectToAction("Details", "Teams", new { id = keeper.TeamId });
+            }
             if (ModelState.IsValid)
             {
                 _repo.keepers.Save(keeper);

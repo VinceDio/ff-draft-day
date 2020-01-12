@@ -187,6 +187,8 @@ namespace ffdraftday.Controllers
             try
             {
                 _repo.drafts.InitPicks(id);
+                var errors = _repo.drafts.ValidateDraft(id);
+                if (errors.Any()) throw new Exception(string.Join(". ", errors));
                 return RedirectToAction("Details", new { id });
             }
             catch (Exception ex)
