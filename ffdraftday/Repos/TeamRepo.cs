@@ -51,7 +51,7 @@ namespace ffdraftday.Repos
 
         public List<Team> List(int draftId)
         {
-            var teams = _db.Team.OrderBy(t => t.DraftPosition).ToList();
+            var teams = _db.Team.Where(t => t.DraftId == draftId).OrderBy(t => t.DraftPosition).ToList();
             return teams;
         }
 
