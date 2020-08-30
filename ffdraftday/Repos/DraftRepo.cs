@@ -146,6 +146,15 @@ namespace ffdraftday.Repos
             return picks;
         }
 
+        public List<Pick> GetPicks(int draftId)
+        {
+            var picks = _db.Pick
+                .Include(p => p.Team)
+                .Include(p => p.Player)
+                .Where(p => p.DraftId == draftId).OrderBy(p => p.OverallPick);
+            return picks.ToList();
+        }
+
         private List<Pick> MoveTradedPicks(List<Pick> picks, Draft draft)
         {
             var trades = _db.Trade.Where(t => t.DraftId == draft.Id)

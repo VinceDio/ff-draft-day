@@ -15,20 +15,55 @@ namespace ffdraftday.Controllers
             _repo = repo;
         }
 
-        [HttpGet("api/teams/{draftId}")]
+        [HttpGet("api/drafts/{draftId}")]
 
-        public async Task<JsonResult> Teams(int draftId)
+        public JsonResult GetDraft(int draftId)
         {
-
-
-            var teams = _repo.teams.List(draftId);
-            return Json(teams);
+            var draft = _repo.drafts.Get(draftId);
+            var dto = new DTO.Draft
+            {
+                Id = draft.Id,
+                Name = draft.Name,
+                Location = draft.Location,
+                Commissioner = draft.Commissioner,
+                StartTime = draft.StartTime,
+                NumberOfTeams = draft.NumberOfTeams,
+                Rounds = draft.Rounds,
+                ClockSeconds = draft.ClockSeconds,
+                Status = draft.Status,
+                CurrentPick = draft.CurrentPick
+            };
+            dto.Teams = draft.Teams.Select(t => new DTO.Team {
+                Id = t.Id,
+                Name = t.Name,
+                Owner = t.Owner,
+                DraftPosition = t.DraftPosition
+            }).ToList();
+            dto.RosterPositions = draft.RosterPositions.Select(r => new DTO.RosterPosition {
+                Position = r.Position,
+                Sequence = r.Sequence
+            }).ToList();
+            return Json(dto);
         }
 
-        public async Task<JsonResult> Players(string searchText = "")
+        [HttpGet("api/drafts/{draftId}/picks")]
+        public JsonResult GetPicks(int draftId)
         {
-            var players = _repo.players.PlayerSelectList(searchText);
-            return Json(players);
+            var picks = _repo.drafts.GetPicks(draftId);
+            List<DTO.Pick> dto = picks.Select(p => new DTO.Pick
+            {
+                OverallPick = p.OverallPick,
+                Round = p.Round,
+                Selection = p.Selection,
+                Team = new DTO.Team { Id = p.Team.Id, Name = p.Team.Name, Owner = p.Team.Owner },
+                Note = p.Note,
+                Player = p.Player == null ? null : new DTO.Player { Id = p.Player.Id, Name = p.Player.Name, Position = p.Player.Position, NFLTeam = p.Player.NFLTeam },
+                IsKeeper = p.IsKeeper,
+                AutoPick = p.AutoPick
+            }).ToList();
+            return Json(dto);
         }
+
+  
     }
 }

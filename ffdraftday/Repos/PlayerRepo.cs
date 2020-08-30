@@ -69,8 +69,8 @@ namespace ffdraftday.Repos
             _positions.Add(new Position("W/R/T", 5));
             _positions.Add(new Position("K", 6));
             _positions.Add(new Position("DEF", 7));
-            _positions.Add(new Position("IR", 8));
-            _positions.Add(new Position("BN", 9));
+            _positions.Add(new Position("BN", 8));
+            _positions.Add(new Position("IR", 9));
         }
 
         public int GetPositionSequence(string positionCode)
