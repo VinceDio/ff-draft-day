@@ -64,6 +64,22 @@ namespace ffdraftday.Controllers
             return Json(dto);
         }
 
+        [HttpGet("api/drafts/{draftId}/players")]
+        public JsonResult GetPlayers(int draftId)
+        {
+            var yr = _repo.drafts.Get(draftId).StartTime.Year;
+            var players = _repo.players.GetPlayerRanks(yr);
+            List<DTO.Player> dto = players.Select(p => new DTO.Player
+            {
+                Id = p.PlayerId,
+                Name = p.Player.Name,
+                Position = p.Player.Position,
+                NFLTeam = p.Player.NFLTeam,
+                Bye = p.Bye,
+                Rank = p.Rank
+            }).ToList();
+            return Json(dto);
+        }
   
     }
 }

@@ -54,6 +54,12 @@ namespace ffdraftday.Repos
             return list;
         }
 
+        public List<PlayerRank> GetPlayerRanks(int yr)
+        {
+            var players = _db.PlayerRank.Include(p => p.Player).Where(p => p.Year == yr);
+            return players.ToList();
+        }
+
         public List<Position> PositionList()
         {
             return _positions;
