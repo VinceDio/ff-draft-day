@@ -31,12 +31,7 @@ namespace ffdraftday.Repos
             _db.SaveChanges();
         }
 
-        public void AddDefault(int draftId)
-        {
-            var pos = _db.Team.Count(t => t.DraftId == draftId) + 1;
-            _db.Team.Add(new Team { DraftId = draftId, DraftPosition = pos, Name = $"Team {pos}" });
-            _db.SaveChanges();
-        }
+
 
         public void Update(Team changes)
         {

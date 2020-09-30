@@ -80,6 +80,7 @@ namespace ffdraftday.Controllers
             }).ToList();
             return Json(dto);
         }
+
   
     }
 }

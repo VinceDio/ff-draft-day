@@ -54,10 +54,6 @@ namespace ffdraftday.Controllers
             if (ModelState.IsValid)
             {
                 _repo.drafts.Add(draft);
-                for(int t = 0; t < draft.NumberOfTeams; t++ )
-                {
-                    _repo.teams.AddDefault(draft.Id);
-                }
                 return RedirectToAction(nameof(Index));
             }
             return View(draft);

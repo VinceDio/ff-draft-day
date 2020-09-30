@@ -32,6 +32,17 @@ namespace ffdraftday.Repos
             _db.Draft.Add(draft);
             _db.SaveChanges();
             AddListOfPositions(draft.Id, new List<string> { "QB", "WR", "WR", "RB", "RB", "TE", "W/R/T", "K", "DEF", "BN", "BN", "BN", "BN", "BN", "BN", "IR" });
+            for (int t = 0; t < draft.NumberOfTeams; t++)
+            {
+                AddDefaultTeam(draft.Id);
+            }
+        }
+
+        public void AddDefaultTeam(int draftId)
+        {
+            var pos = _db.Team.Count(t => t.DraftId == draftId) + 1;
+            _db.Team.Add(new Team { DraftId = draftId, DraftPosition = pos, Name = $"Team {pos}" });
+            _db.SaveChanges();
         }
 
         private void AddListOfPositions(int draftId, List<string> positions)
