@@ -42,7 +42,7 @@ namespace Tests
         {
             _repo.drafts.Add(_draft);
             var draft = _db.Draft.Find(1);
-            Assert.True(draft.Name == _draft.Name);
+            Assert.That(draft.Name, Is.EqualTo(_draft.Name));
         }
 
         [Test, Category("Draft"), Order(2)]
@@ -51,14 +51,14 @@ namespace Tests
             var draft = _repo.drafts.Get(_draft.Id);
             _team = draft.Teams[0];
             _team2 = draft.Teams[1];
-            Assert.True(draft.Name == _draft.Name);
+            Assert.That(draft.Name, Is.EqualTo(_draft.Name));
         }
 
-        [Test, Order(3)]
+        [Test, Category("Team"), Order(3)]
         public void GetTeamWorks()
         {
             var team = _repo.teams.Get(_team.Id);
-            Assert.True(team.DraftId == _draft.Id);
+            Assert.That(team.DraftId, Is.EqualTo(_draft.Id));
         }
 
         [Test, Order(4)]
@@ -71,14 +71,14 @@ namespace Tests
         public void GetPicksWorks()
         {
             var picks = _repo.drafts.GetPicks(_draft.Id);
-            Assert.True(picks.Count > 0);
+            Assert.That(picks, Has.Count.GreaterThan(0));
         }
 
         [Test, Order(9)]
         public void CanValidateValidDraft()
         {
             var errors = _repo.drafts.ValidateDraft(_draft.Id);
-            Assert.True(errors.Count == 0);
+            Assert.That(errors, Has.Count.EqualTo(0));
         }
 
         [Test, Order(10)]
@@ -91,6 +91,8 @@ namespace Tests
                 Team2Id = _team2.Id
             };
             _repo.trades.Add(_trade);
+            var trades = _repo.trades.List(_draft.Id);
+            Assert.That(trades, Has.Count.EqualTo(1));
         }
 
         [Test, Order(11)]
@@ -107,14 +109,14 @@ namespace Tests
             };
             _repo.trades.AddItem(item1);
             var trade = _db.Trade.Find(_trade.Id);
-            Assert.IsTrue(trade.Items[0].Selection == item1.Selection);
+            Assert.That(trade.Items[0].Selection, Is.EqualTo(item1.Selection));
         }
         
         [Test, Order(12)]
         public void UnbalancedPicksResultsInInvalidDraft()
         {
             var errors = _repo.drafts.ValidateDraft(_draft.Id);
-            Assert.IsTrue(errors[0].Contains("unbalanced trade"));
+            StringAssert.Contains("unbalanced trade", errors[0]);
         }
 
         [Test, Order(13)]
@@ -131,7 +133,7 @@ namespace Tests
             };
             _repo.trades.AddItem(item2);
             var trade = _db.Trade.Find(_trade.Id);
-            Assert.IsTrue(trade.Items.Count == 2);
+            Assert.That(trade.Items, Has.Count.EqualTo(2));
         }
 
     }
