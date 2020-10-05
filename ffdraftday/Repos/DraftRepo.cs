@@ -240,5 +240,55 @@ namespace ffdraftday.Repos
             if (!errors.Any()) ChangeDraftStatus(draftId, "Ready");
             return errors;
         }
+
+        public ResultOfMethod DraftPlayer(Pick selection)
+        {
+            var draft = _db.Draft.Find(selection.DraftId);
+            if (draft == null) return new ResultOfMethod("Draft not found");
+            if (draft.CurrentPick != selection.OverallPick) return new ResultOfMethod($"Pick { selection.OverallPick } does not match current pick for draft ({ draft.CurrentPick }).");
+
+            var team = _db.Team.Find(selection.TeamId);
+            if (team == null) return new ResultOfMethod("Team not found");
+
+            var player = _db.Player.Find(selection.PlayerId);
+            if (player == null) return new ResultOfMethod("Player not found");
+
+            var pick = _db.Pick.FirstOrDefault(p => p.TeamId == selection.TeamId && p.OverallPick == selection.OverallPick);
+            if (pick == null) return new ResultOfMethod("This team does not have this pick");
+            if (pick.IsKeeper) return new ResultOfMethod("This is a keeper pick and cannot be drafted");
+            if (pick.PlayerId != null) return new ResultOfMethod("This pick has already been made");
+            if (pick.DraftId != selection.DraftId) return new ResultOfMethod("This pick is not part of this draft");
+
+            var playerPick = _db.Pick.Where(p => p.DraftId == draft.Id && p.PlayerId == player.Id).FirstOrDefault();
+            if (playerPick != null) return new ResultOfMethod($"This player has already been selected with pick { playerPick.OverallPick }");
+
+            pick.PlayerId = selection.PlayerId;
+            pick.AutoPick = selection.AutoPick;
+            pick.TimeStamp = DateTime.Now;
+            _db.SaveChanges();
+
+            SetCurrentPick(selection.DraftId);
+            return new ResultOfMethod { Success = true };
+        }
+
+        private void SetCurrentPick(int draftId)
+        {
+            var draft = _db.Draft.Find(draftId);
+            if (draft == null) throw new Exception("Draft not found");
+            var nextPick = _db.Pick
+                .Where(p => p.DraftId == draftId && p.PlayerId == null)
+                .OrderBy(p => p.OverallPick)
+                .FirstOrDefault();
+            if (nextPick == null)
+            {
+                draft.Status = "Completed";
+                draft.CurrentPick = 1;
+            }
+            else
+            {
+                draft.CurrentPick = nextPick.OverallPick;
+            }
+            _db.SaveChanges();
+        }
     }
 }

@@ -82,5 +82,25 @@ namespace ffdraftday.Controllers
         }
 
   
+        [HttpPost("api/drafts/{draftId}/pick")]
+        public ActionResult PostDraftPick(int draftId, [FromBody] DTO.Pick pick)
+        {
+            if (draftId <= 0) return BadRequest("Draft Id not provided");
+            if (pick.OverallPick == 0) return BadRequest("Overall Pick number not provided");
+            if (pick.Team?.Id == null) return BadRequest("Team id not provided");
+            if (pick.Player?.Id == null) return BadRequest("Player id not provided");
+
+            var selection = new Models.Pick
+            {
+                DraftId = draftId,
+                PlayerId = pick.Player.Id,
+                TeamId = pick.Team.Id,
+                OverallPick = pick.OverallPick,
+                AutoPick = pick.AutoPick
+            };
+            var result = _repo.drafts.DraftPlayer(selection);
+            if (result.Success) return Ok(pick);
+            else return BadRequest(result.ErrorMessage);
+        }
     }
 }

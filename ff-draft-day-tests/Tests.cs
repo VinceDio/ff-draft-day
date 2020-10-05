@@ -18,8 +18,8 @@ namespace Tests
         private Team _team2;
         private Trade _trade;
 
-        [SetUp]
-        public void Setup()
+        [OneTimeSetUp]
+        public void InitSetup()
         {
             var options = new DbContextOptionsBuilder<ffdraftdayContext>()
                 .UseInMemoryDatabase(databaseName: "ffDraftTestDB")
@@ -41,7 +41,7 @@ namespace Tests
         public void AddDraftWorks()
         {
             _repo.drafts.Add(_draft);
-            var draft = _db.Draft.Find(1);
+            var draft = _db.Draft.Find(_draft.Id);
             Assert.That(draft.Name, Is.EqualTo(_draft.Name));
         }
 
