@@ -20,6 +20,7 @@ namespace ffdraftday.Controllers
         public JsonResult GetDraft(int draftId)
         {
             var draft = _repo.drafts.Get(draftId);
+            Models.Pick currPick = draft.CurrentPick == 0 ? null : _repo.drafts.GetPickByOverallSelection(draft.Id, draft.CurrentPick);
             var dto = new DTO.Draft
             {
                 Id = draft.Id,
@@ -31,14 +32,9 @@ namespace ffdraftday.Controllers
                 Rounds = draft.Rounds,
                 ClockSeconds = draft.ClockSeconds,
                 Status = draft.Status,
-                CurrentPick = draft.CurrentPick
+                CurrentPick = MapPickDTO(currPick)
             };
-            dto.Teams = draft.Teams.Select(t => new DTO.Team {
-                Id = t.Id,
-                Name = t.Name,
-                Owner = t.Owner,
-                DraftPosition = t.DraftPosition
-            }).ToList();
+            dto.Teams = draft.Teams.Select(t => MapTeamDTO(t)).ToList();
             dto.RosterPositions = draft.RosterPositions.Select(r => new DTO.RosterPosition {
                 Position = r.Position,
                 Sequence = r.Sequence
@@ -50,18 +46,47 @@ namespace ffdraftday.Controllers
         public JsonResult GetPicks(int draftId)
         {
             var picks = _repo.drafts.GetPicks(draftId);
-            List<DTO.Pick> dto = picks.Select(p => new DTO.Pick
-            {
-                OverallPick = p.OverallPick,
-                Round = p.Round,
-                Selection = p.Selection,
-                Team = new DTO.Team { Id = p.Team.Id, Name = p.Team.Name, Owner = p.Team.Owner },
-                Note = p.Note,
-                Player = p.Player == null ? null : new DTO.Player { Id = p.Player.Id, Name = p.Player.Name, Position = p.Player.Position, NFLTeam = p.Player.NFLTeam },
-                IsKeeper = p.IsKeeper,
-                AutoPick = p.AutoPick
-            }).ToList();
+            List<DTO.Pick> dto = picks.Select(p => MapPickDTO(p)).ToList();
             return Json(dto);
+        }
+
+        private DTO.Pick MapPickDTO(Models.Pick pick)
+        {
+            var dto = new DTO.Pick {
+                OverallPick = pick.OverallPick,
+                Round = pick.Round,
+                Selection = pick.Selection,
+                Team = MapTeamDTO(pick.Team),
+                Note = pick.Note,
+                Player = pick.Player == null ? null : MapPlayerDTO(pick.Player),
+                IsKeeper = pick.IsKeeper,
+                AutoPick = pick.AutoPick
+            };
+            return dto;
+        }
+
+        private DTO.Team MapTeamDTO(Models.Team team)
+        {
+            var dto = new DTO.Team
+            {
+                Id = team.Id,
+                Name = team.Name,
+                Owner = team.Owner,
+                DraftPosition = team.DraftPosition
+            };
+            return dto;
+        }
+
+        private DTO.Player MapPlayerDTO(Models.Player player)
+        {
+            var dto = new DTO.Player
+            {
+                Id = player.Id,
+                Name = player.Name,
+                Position = player.Position,
+                NFLTeam = player.NFLTeam
+            };
+            return dto;
         }
 
         [HttpGet("api/drafts/{draftId}/players")]

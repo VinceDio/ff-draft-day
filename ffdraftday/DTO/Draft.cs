@@ -17,7 +17,7 @@ namespace ffdraftday.DTO
         public int ClockSeconds { get; set; }
         public DateTime StartTime { get; set; }
         public string Status { get; set; }
-        public int CurrentPick { get; set; }
+        public Pick CurrentPick { get; set; }
         public List<Team> Teams { get; set; }
         public List<RosterPosition> RosterPositions { get; set; }
     }

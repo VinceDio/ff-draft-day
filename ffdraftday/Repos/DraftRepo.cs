@@ -271,6 +271,12 @@ namespace ffdraftday.Repos
             return new ResultOfMethod { Success = true };
         }
 
+        public Pick GetPickByOverallSelection(int draftId, int overallSelection)
+        {
+            var pick = _db.Pick.FirstOrDefault(p => p.DraftId == draftId && p.OverallPick == overallSelection);
+            return pick;
+        }
+
         private void SetCurrentPick(int draftId)
         {
             var draft = _db.Draft.Find(draftId);
@@ -290,5 +296,7 @@ namespace ffdraftday.Repos
             }
             _db.SaveChanges();
         }
+
+
     }
 }
