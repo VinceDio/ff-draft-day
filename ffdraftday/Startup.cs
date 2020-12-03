@@ -37,7 +37,7 @@ namespace ffdraftday
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
+                    builder => builder.WithOrigins("http://localhost:4200")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials()
@@ -50,22 +50,37 @@ namespace ffdraftday
                     options.UseSqlServer(Configuration.GetConnectionString("ffdraftdayContext")));
 
             services.AddTransient<Repo, Repo>();
+
+            services.AddSwaggerGen(setup =>
+            {
+                setup.SwaggerDoc("ffdraftday", new Microsoft.OpenApi.Models.OpenApiInfo()
+                {
+                    Title = "Fantasy Football Draft Day",
+                    Version = "1.0"
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
-            }
+            app.UseDeveloperExceptionPage();
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
+            //else
+            //{
+            //    app.UseExceptionHandler("/Home/Error");
+            //    app.UseHsts();
+            //}
 
             app.UseHttpsRedirection();
+            app.UseSwagger();
+            app.UseSwaggerUI(setup =>
+            {
+                setup.SwaggerEndpoint("/swagger/ffdraftday/swagger.json", "FF Draft Day");
+            });
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseCors("CorsPolicy");

@@ -17,12 +17,12 @@ namespace ffdraftday.Controllers
 
         [HttpGet("api/drafts/{draftId}")]
 
-        public JsonResult GetDraft(int draftId)
+        public ActionResult GetDraft(int draftId)
         {
             var draft = _repo.drafts.Get(draftId);
             if (draft == null)
             {
-                return Json($"Draft Id { draftId } does not exist.");
+                return NotFound($"Draft Id { draftId } does not exist.");
             }
             Models.Pick currPick = draft.CurrentPick == 0 ? null : _repo.drafts.GetPickByOverallSelection(draft.Id, draft.CurrentPick);
             var dto = new DTO.Draft
